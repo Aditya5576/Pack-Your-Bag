@@ -4,14 +4,14 @@
 async function initProfileView() {
   const appView = document.getElementById("app-view");
   const state = window.appState;
-  
+
   let saved = [];
   try {
     saved = await window.dbAPI.getPassengers();
   } catch (err) {
     console.error("Failed to load saved passenger profiles: ", err);
   }
-  
+
   renderProfileUI(saved);
   bindProfileEvents(saved);
 
@@ -76,7 +76,9 @@ async function initProfileView() {
             </div>
 
             <div class="saved-passengers-list">
-              ${saved.map(p => `
+              ${saved
+                .map(
+                  (p) => `
                 <div class="passenger-item-row">
                   <div class="pax-details">
                     <strong>${p.name}</strong>
@@ -84,13 +86,19 @@ async function initProfileView() {
                   </div>
                   <button class="btn-delete-pax btn-danger-link" data-id="${p.id}">Remove</button>
                 </div>
-              `).join('')}
+              `
+                )
+                .join("")}
 
-              ${saved.length === 0 ? `
+              ${
+                saved.length === 0
+                  ? `
                 <div class="empty-state-pax text-center">
                   <p class="text-muted">No saved passenger profiles. Add one above to autofill during checkout.</p>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           </div>
         </div>
@@ -104,16 +112,16 @@ async function initProfileView() {
     const addPanel = document.getElementById("add-passenger-panel");
     const addForm = document.getElementById("add-passenger-form");
     const cancelAddBtn = document.getElementById("btn-cancel-pax-add");
-    
+
     // Save Profile modifications
     editForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const emailVal = document.getElementById("prof-email").value.trim();
       const mobileVal = document.getElementById("prof-mobile").value.trim();
-      
+
       state.currentUser.email = emailVal;
       state.currentUser.mobile = mobileVal;
-      
+
       showNotification("Profile details saved successfully!", "success");
     });
 
@@ -121,7 +129,7 @@ async function initProfileView() {
     showAddBtn.addEventListener("click", () => {
       addPanel.style.display = "block";
     });
-    
+
     cancelAddBtn.addEventListener("click", () => {
       addPanel.style.display = "none";
       addForm.reset();
@@ -133,7 +141,7 @@ async function initProfileView() {
       const pName = document.getElementById("add-p-name").value.trim();
       const pAge = parseInt(document.getElementById("add-p-age").value);
       const pGender = document.getElementById("add-p-gender").value;
-      
+
       const newPax = {
         id: `P-${Math.floor(1000 + Math.random() * 9000)}`,
         name: pName,
@@ -149,18 +157,18 @@ async function initProfileView() {
       } catch (err) {
         console.error("Failed to add passenger: ", err);
       }
-      
+
       // Refresh views
       await initProfileView();
     });
 
     // Delete passenger profile
-    document.querySelectorAll(".btn-delete-pax").forEach(btn => {
+    document.querySelectorAll(".btn-delete-pax").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         const id = e.currentTarget.getAttribute("data-id");
         try {
           await window.dbAPI.deletePassenger(id);
-          state.currentUser.savedPassengers = state.currentUser.savedPassengers.filter(p => p.id !== id);
+          state.currentUser.savedPassengers = state.currentUser.savedPassengers.filter((p) => p.id !== id);
           showNotification("Passenger profile removed.", "info");
         } catch (err) {
           console.error("Failed to delete passenger: ", err);
@@ -174,7 +182,7 @@ async function initProfileView() {
 // Renders the My Trips bookings list and refund modals
 async function initMyTripsView() {
   const appView = document.getElementById("app-view");
-  
+
   let bookings = [];
   try {
     bookings = await window.dbAPI.getBookings();
@@ -185,12 +193,12 @@ async function initMyTripsView() {
   // Sort bookings: Newest booking date first
   bookings.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
 
-  const todayStr = new Date().toISOString().split('T')[0];
-  
+  const todayStr = new Date().toISOString().split("T")[0];
+
   // Categorize bookings
-  const upcoming = bookings.filter(b => b.status === "Confirmed" && b.date >= todayStr);
-  const past = bookings.filter(b => b.status === "Confirmed" && b.date < todayStr);
-  const cancelled = bookings.filter(b => b.status === "Cancelled");
+  const upcoming = bookings.filter((b) => b.status === "Confirmed" && b.date >= todayStr);
+  const past = bookings.filter((b) => b.status === "Confirmed" && b.date < todayStr);
+  const cancelled = bookings.filter((b) => b.status === "Cancelled");
 
   renderMyTripsUI();
   bindMyTripsEvents();
@@ -210,17 +218,17 @@ async function initMyTripsView() {
 
         <!-- Upcoming Trips -->
         <div class="trips-content-panel" id="upcoming-trips-list">
-          ${upcoming.length === 0 ? renderEmptyTripsState("No upcoming trips booked.") : upcoming.map(b => renderTripCard(b, true)).join('')}
+          ${upcoming.length === 0 ? renderEmptyTripsState("No upcoming trips booked.") : upcoming.map((b) => renderTripCard(b, true)).join("")}
         </div>
 
         <!-- Completed Trips -->
         <div class="trips-content-panel" id="completed-trips-list" style="display:none;">
-          ${past.length === 0 ? renderEmptyTripsState("No past trips found.") : past.map(b => renderTripCard(b, false)).join('')}
+          ${past.length === 0 ? renderEmptyTripsState("No past trips found.") : past.map((b) => renderTripCard(b, false)).join("")}
         </div>
 
         <!-- Cancelled Trips -->
         <div class="trips-content-panel" id="cancelled-trips-list" style="display:none;">
-          ${cancelled.length === 0 ? renderEmptyTripsState("No cancelled trips.") : cancelled.map(b => renderTripCard(b, false)).join('')}
+          ${cancelled.length === 0 ? renderEmptyTripsState("No cancelled trips.") : cancelled.map((b) => renderTripCard(b, false)).join("")}
         </div>
       </div>
 
@@ -278,8 +286,8 @@ async function initMyTripsView() {
           
           <div class="trip-summary-details">
             <p><strong>Travel Date:</strong> ${formatDisplayDate(booking.date)}</p>
-            <p><strong>Passenger(s):</strong> ${booking.passengers.map(p => p.name).join(', ')}</p>
-            <p><strong>Seat(s):</strong> ${booking.seats.join(', ')}</p>
+            <p><strong>Passenger(s):</strong> ${booking.passengers.map((p) => p.name).join(", ")}</p>
+            <p><strong>Seat(s):</strong> ${booking.seats.join(", ")}</p>
           </div>
           
           <div class="trip-summary-pricing">
@@ -289,14 +297,22 @@ async function initMyTripsView() {
         </div>
         
         <div class="trip-summary-footer">
-          ${booking.status === "Confirmed" ? `
+          ${
+            booking.status === "Confirmed"
+              ? `
             <a href="#/ticket?bookingId=${booking.id}" class="btn btn-outline btn-sm">View Ticket</a>
-          ` : ''}
-          ${isUpcoming && booking.status === "Confirmed" ? `
+          `
+              : ""
+          }
+          ${
+            isUpcoming && booking.status === "Confirmed"
+              ? `
             <button class="btn btn-danger btn-sm btn-trigger-cancel" data-id="${booking.id}" data-total="${booking.billing.grandTotal}">
               Cancel Journey
             </button>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       </div>
     `;
@@ -305,13 +321,13 @@ async function initMyTripsView() {
   function bindMyTripsEvents() {
     // Tabs clicking
     const tabs = document.querySelectorAll(".trips-tab");
-    tabs.forEach(tab => {
+    tabs.forEach((tab) => {
       tab.addEventListener("click", (e) => {
-        tabs.forEach(t => t.classList.remove("active"));
+        tabs.forEach((t) => t.classList.remove("active"));
         e.currentTarget.classList.add("active");
-        
+
         const targetId = e.currentTarget.getAttribute("data-target");
-        document.querySelectorAll(".trips-content-panel").forEach(panel => {
+        document.querySelectorAll(".trips-content-panel").forEach((panel) => {
           panel.style.display = "none";
         });
         document.getElementById(targetId).style.display = "block";
@@ -321,13 +337,13 @@ async function initMyTripsView() {
     // Cancellation modals triggering
     let selectedBookingId = null;
     let selectedBookingRefund = 0;
-    
-    document.querySelectorAll(".btn-trigger-cancel").forEach(btn => {
+
+    document.querySelectorAll(".btn-trigger-cancel").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         selectedBookingId = e.currentTarget.getAttribute("data-id");
         const total = parseFloat(e.currentTarget.getAttribute("data-total"));
         selectedBookingRefund = Math.floor(total * 0.9); // 10% penalty deduction
-        
+
         document.getElementById("cancel-booking-id").textContent = selectedBookingId;
         document.getElementById("cancel-refund-amount").textContent = `₹${selectedBookingRefund}`;
         document.getElementById("cancel-modal-overlay").style.display = "flex";
@@ -348,16 +364,13 @@ async function initMyTripsView() {
       } catch (err) {
         console.error("Failed to load booking: ", err);
       }
-      
+
       if (booking) {
         // Fetch corresponding route to free seat map
         let route = null;
         if (window.useSupabase) {
           try {
-            const { data, error } = await window.supabaseClient
-              .from("routes")
-              .select("*")
-              .eq("id", booking.tripId);
+            const { data, error } = await window.supabaseClient.from("routes").select("*").eq("id", booking.tripId);
             if (!error && data.length > 0) {
               route = data[0];
             }
@@ -366,33 +379,39 @@ async function initMyTripsView() {
           }
         } else {
           const db = getDB();
-          route = db.routes.find(r => r.id === booking.tripId);
+          route = db.routes.find((r) => r.id === booking.tripId);
         }
 
         if (route) {
-          const updatedLayout = [...route.seat_layout || route.seatLayout];
-          booking.seats.forEach(seatNo => {
+          const updatedLayout = [...(route.seat_layout || route.seatLayout)];
+          booking.seats.forEach((seatNo) => {
             let seatIdx = -1;
             if (booking.type === "bus") {
               const row = parseInt(seatNo) - 1;
-              const col = ['A', 'B', 'C', 'D'].indexOf(seatNo.slice(-1));
-              seatIdx = (row * 4) + col;
+              const col = ["A", "B", "C", "D"].indexOf(seatNo.slice(-1));
+              seatIdx = row * 4 + col;
             } else if (booking.type === "train") {
               seatIdx = parseInt(seatNo.split("-")[0]) - 1;
             } else if (booking.type === "flight") {
               const row = parseInt(seatNo) - 1;
-              const col = ['A', 'B', 'C', 'D', 'E', 'F'].indexOf(seatNo.slice(-1));
-              seatIdx = (row * 6) + col;
+              const col = ["A", "B", "C", "D", "E", "F"].indexOf(seatNo.slice(-1));
+              seatIdx = row * 6 + col;
             }
             if (seatIdx > -1) {
               updatedLayout[seatIdx] = null; // Free seat
             }
           });
 
-          const seatsLeft = Math.min(route.seats_total || route.seatsTotal, (route.seats_available || route.seatsAvailable) + booking.seats.length);
+          const seatsLeft = Math.min(
+            route.seats_total || route.seatsTotal,
+            (route.seats_available || route.seatsAvailable) + booking.seats.length
+          );
           try {
             await window.dbAPI.cancelBooking(selectedBookingId, booking.tripId, updatedLayout, seatsLeft);
-            showNotification(`Refund of ₹${selectedBookingRefund} initiated successfully! Ref: RZP-REF-9923`, "success");
+            showNotification(
+              `Refund of ₹${selectedBookingRefund} initiated successfully! Ref: RZP-REF-9923`,
+              "success"
+            );
           } catch (err) {
             console.error("Failed to cancel: ", err);
             showNotification("Cancellation failed.", "error");
@@ -401,12 +420,15 @@ async function initMyTripsView() {
           // Fallback if route not found
           try {
             await window.dbAPI.cancelBooking(selectedBookingId, booking.tripId, [], 0);
-            showNotification(`Refund of ₹${selectedBookingRefund} initiated successfully! Ref: RZP-REF-9923`, "success");
+            showNotification(
+              `Refund of ₹${selectedBookingRefund} initiated successfully! Ref: RZP-REF-9923`,
+              "success"
+            );
           } catch (err) {
             console.error(err);
           }
         }
-        
+
         // Refresh UI lists
         await initMyTripsView();
       }

@@ -30,8 +30,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  font-family: "Outfit", "Plus Jakarta Sans", sans-serif;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 body {
@@ -103,7 +105,8 @@ a {
   transition: all 0.2s ease;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
   color: var(--text-primary);
   background-color: var(--glass-bg);
 }
@@ -283,7 +286,9 @@ a {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Toast Notifications styling */
@@ -325,9 +330,15 @@ a {
   font-size: 18px;
 }
 
-.notification-toast.success .notification-icon { color: var(--success); }
-.notification-toast.error .notification-icon { color: var(--danger); }
-.notification-toast.info .notification-icon { color: var(--info); }
+.notification-toast.success .notification-icon {
+  color: var(--success);
+}
+.notification-toast.error .notification-icon {
+  color: var(--danger);
+}
+.notification-toast.info .notification-icon {
+  color: var(--info);
+}
 
 /* Animation utilities */
 .animate-slide-in {

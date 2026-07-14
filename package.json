@@ -6,9 +6,28 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "npm run build && wrangler dev",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test:unit": "vitest run",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "audit:lighthouse": "node scripts/audit-lighthouse.js",
+    "deploy": "npm run build && wrangler deploy"
   },
   "devDependencies": {
-    "vite": "^6.0.0"
+    "@cloudflare/vite-plugin": "^1.44.0",
+    "@playwright/test": "^1.61.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-html": "^8.1.4",
+    "globals": "^17.7.0",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.9.5",
+    "vite": "^6.0.0",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.110.0"
   }
 }

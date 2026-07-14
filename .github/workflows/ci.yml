@@ -1,0 +1,42 @@
+name: QA & CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quality-assurance:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Code Formatter Checks (Prettier)
+      run: npx prettier --check .
+
+    - name: Run Code Linter Checks (ESLint)
+      run: npm run lint
+
+    - name: Run Unit Tests (Vitest)
+      run: npm run test:unit
+
+    - name: Install Playwright Browsers & OS Dependencies
+      run: npx playwright install --with-deps
+
+    - name: Run End-to-End Tests (Playwright)
+      run: npm run test:e2e
+
+    - name: Run Production Bundle Compile (Vite Build)
+      run: npm run build

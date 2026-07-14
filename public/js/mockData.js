@@ -1,8 +1,16 @@
 // mockData.js - Persistent data seeds and cloud Supabase CRUD API wrapper
 
 const CITIES = [
-  "Mumbai", "Delhi", "Bangalore", "Pune", "Chennai", 
-  "Kolkata", "Hyderabad", "Ahmedabad", "Goa", "Jaipur"
+  "Mumbai",
+  "Delhi",
+  "Bangalore",
+  "Pune",
+  "Chennai",
+  "Kolkata",
+  "Hyderabad",
+  "Ahmedabad",
+  "Goa",
+  "Jaipur"
 ];
 
 const TRAVEL_PROVIDERS = {
@@ -14,26 +22,93 @@ const TRAVEL_PROVIDERS = {
     { name: "Purple Travels", rating: 4.1, amenities: ["AC", "Sleeper", "Charging Port", "Water Bottle"] }
   ],
   train: [
-    { name: "Rajdhani Express (12951)", rating: 4.5, classes: ["1A", "2A", "3A"], amenities: ["Food Included", "AC", "Bedding"] },
-    { name: "Shatabdi Express (12002)", rating: 4.3, classes: ["CC", "EC"], amenities: ["Food Included", "AC", "WiFi"] },
-    { name: "Vande Bharat (22436)", rating: 4.7, classes: ["CC", "EC"], amenities: ["AC", "WiFi", "Meal Service", "Charging Port"] },
+    {
+      name: "Rajdhani Express (12951)",
+      rating: 4.5,
+      classes: ["1A", "2A", "3A"],
+      amenities: ["Food Included", "AC", "Bedding"]
+    },
+    {
+      name: "Shatabdi Express (12002)",
+      rating: 4.3,
+      classes: ["CC", "EC"],
+      amenities: ["Food Included", "AC", "WiFi"]
+    },
+    {
+      name: "Vande Bharat (22436)",
+      rating: 4.7,
+      classes: ["CC", "EC"],
+      amenities: ["AC", "WiFi", "Meal Service", "Charging Port"]
+    },
     { name: "Garib Rath (12909)", rating: 3.7, classes: ["3A"], amenities: ["AC"] },
     { name: "Duronto Express (12260)", rating: 4.0, classes: ["1A", "2A", "3A", "SL"], amenities: ["AC", "Bedding"] }
   ],
   flight: [
-    { name: "IndiGo", rating: 4.1, code: "6E", classes: ["Economy"], amenities: ["Cabin Baggage 7kg", "Check-in Baggage 15kg"] },
-    { name: "Air India", rating: 4.0, code: "AI", classes: ["Economy", "Business"], amenities: ["Cabin Baggage 7kg", "Check-in Baggage 25kg", "Meal Included", "AC"] },
-    { name: "SpiceJet", rating: 3.6, code: "SG", classes: ["Economy"], amenities: ["Cabin Baggage 7kg", "Check-in Baggage 15kg"] },
-    { name: "Vistara", rating: 4.6, code: "UK", classes: ["Economy", "Business"], amenities: ["Cabin Baggage 7kg", "Check-in Baggage 20kg", "Meal Included", "In-flight Entertainment"] },
-    { name: "Akasa Air", rating: 4.2, code: "QP", classes: ["Economy"], amenities: ["Cabin Baggage 7kg", "Check-in Baggage 15kg", "USB Port"] }
+    {
+      name: "IndiGo",
+      rating: 4.1,
+      code: "6E",
+      classes: ["Economy"],
+      amenities: ["Cabin Baggage 7kg", "Check-in Baggage 15kg"]
+    },
+    {
+      name: "Air India",
+      rating: 4.0,
+      code: "AI",
+      classes: ["Economy", "Business"],
+      amenities: ["Cabin Baggage 7kg", "Check-in Baggage 25kg", "Meal Included", "AC"]
+    },
+    {
+      name: "SpiceJet",
+      rating: 3.6,
+      code: "SG",
+      classes: ["Economy"],
+      amenities: ["Cabin Baggage 7kg", "Check-in Baggage 15kg"]
+    },
+    {
+      name: "Vistara",
+      rating: 4.6,
+      code: "UK",
+      classes: ["Economy", "Business"],
+      amenities: ["Cabin Baggage 7kg", "Check-in Baggage 20kg", "Meal Included", "In-flight Entertainment"]
+    },
+    {
+      name: "Akasa Air",
+      rating: 4.2,
+      code: "QP",
+      classes: ["Economy"],
+      amenities: ["Cabin Baggage 7kg", "Check-in Baggage 15kg", "USB Port"]
+    }
   ]
 };
 
 const INITIAL_COUPONS = [
-  { code: "PACKBAGS20", type: "percentage", value: 20, description: "Get 20% off on all travel modes (Max discount ₹500)", maxDiscount: 500, minFare: 500 },
+  {
+    code: "PACKBAGS20",
+    type: "percentage",
+    value: 20,
+    description: "Get 20% off on all travel modes (Max discount ₹500)",
+    maxDiscount: 500,
+    minFare: 500
+  },
   { code: "FIRSTTRIP", type: "flat", value: 150, description: "Flat ₹150 off on your first booking", minFare: 400 },
-  { code: "SUPERFLIGHT", type: "percentage", value: 15, description: "15% off on flights (Max discount ₹1000)", maxDiscount: 1000, minFare: 2000, mode: "flight" },
-  { code: "RAILBUDDY", type: "flat", value: 50, description: "Flat ₹50 off on any Train ticket", minFare: 150, mode: "train" }
+  {
+    code: "SUPERFLIGHT",
+    type: "percentage",
+    value: 15,
+    description: "15% off on flights (Max discount ₹1000)",
+    maxDiscount: 1000,
+    minFare: 2000,
+    mode: "flight"
+  },
+  {
+    code: "RAILBUDDY",
+    type: "flat",
+    value: 50,
+    description: "Flat ₹50 off on any Train ticket",
+    minFare: 150,
+    mode: "train"
+  }
 ];
 
 // Helper to generate a random ID
@@ -51,9 +126,7 @@ function getDB() {
       routes: [],
       bookings: [],
       coupons: INITIAL_COUPONS,
-      passengers: [
-        { id: "P-1", name: "Aditya Patil", age: 24, gender: "Male" }
-      ]
+      passengers: [{ id: "P-1", name: "Aditya Patil", age: 24, gender: "Male" }]
     };
     localStorage.setItem("bookmytrip_db", JSON.stringify(db));
   } else {
@@ -72,25 +145,28 @@ function generateLocalTripsForDate(dateStr) {
   for (let i = 0; i < CITIES.length; i++) {
     for (let j = 0; j < CITIES.length; j++) {
       if (i === j) continue;
-      
+
       const origin = CITIES[i];
       const destination = CITIES[j];
-      
+
       // Seed Bus
       const busCount = 2;
       for (let b = 0; b < busCount; b++) {
         const provider = TRAVEL_PROVIDERS.bus[Math.floor(Math.random() * TRAVEL_PROVIDERS.bus.length)];
-        const depHour = 7 + (b * 5) + Math.floor(Math.random() * 3);
+        const depHour = 7 + b * 5 + Math.floor(Math.random() * 3);
         const depMin = [0, 15, 30, 45][Math.floor(Math.random() * 4)];
         const durationHours = 4 + Math.floor(Math.random() * 4);
         const durationMins = [0, 15, 30][Math.floor(Math.random() * 3)];
-        
-        const depTime = `${String(depHour).padStart(2, '0')}:${String(depMin).padStart(2, '0')}`;
+
+        const depTime = `${String(depHour).padStart(2, "0")}:${String(depMin).padStart(2, "0")}`;
         let arrHour = (depHour + durationHours) % 24;
-        let arrMin = (depMin + durationMins);
-        if (arrMin >= 60) { arrHour = (arrHour + 1) % 24; arrMin -= 60; }
-        const arrTime = `${String(arrHour).padStart(2, '0')}:${String(arrMin).padStart(2, '0')}`;
-        const price = Math.floor(400 + (durationHours * 90) + (Math.random() * 100));
+        let arrMin = depMin + durationMins;
+        if (arrMin >= 60) {
+          arrHour = (arrHour + 1) % 24;
+          arrMin -= 60;
+        }
+        const arrTime = `${String(arrHour).padStart(2, "0")}:${String(arrMin).padStart(2, "0")}`;
+        const price = Math.floor(400 + durationHours * 90 + Math.random() * 100);
 
         newRoutes.push({
           id: generateId("BUS"),
@@ -107,7 +183,9 @@ function generateLocalTripsForDate(dateStr) {
           price,
           seatsTotal: 40,
           seatsAvailable: Math.floor(10 + Math.random() * 20),
-          seatLayout: Array(40).fill(null).map((_, idx) => Math.random() > 0.6 ? null : "booked")
+          seatLayout: Array(40)
+            .fill(null)
+            .map((_, idx) => (Math.random() > 0.6 ? null : "booked"))
         });
       }
 
@@ -115,17 +193,20 @@ function generateLocalTripsForDate(dateStr) {
       const trainCount = 1;
       for (let t = 0; t < trainCount; t++) {
         const provider = TRAVEL_PROVIDERS.train[Math.floor(Math.random() * TRAVEL_PROVIDERS.train.length)];
-        const depHour = 6 + (t * 8) + Math.floor(Math.random() * 3);
+        const depHour = 6 + t * 8 + Math.floor(Math.random() * 3);
         const depMin = [0, 30][Math.floor(Math.random() * 2)];
         const durationHours = 5 + Math.floor(Math.random() * 6);
         const durationMins = [0, 30][Math.floor(Math.random() * 2)];
-        
-        const depTime = `${String(depHour).padStart(2, '0')}:${String(depMin).padStart(2, '0')}`;
+
+        const depTime = `${String(depHour).padStart(2, "0")}:${String(depMin).padStart(2, "0")}`;
         let arrHour = (depHour + durationHours) % 24;
-        let arrMin = (depMin + durationMins);
-        if (arrMin >= 60) { arrHour = (arrHour + 1) % 24; arrMin -= 60; }
-        const arrTime = `${String(arrHour).padStart(2, '0')}:${String(arrMin).padStart(2, '0')}`;
-        const price = Math.floor(300 + (durationHours * 70));
+        let arrMin = depMin + durationMins;
+        if (arrMin >= 60) {
+          arrHour = (arrHour + 1) % 24;
+          arrMin -= 60;
+        }
+        const arrTime = `${String(arrHour).padStart(2, "0")}:${String(arrMin).padStart(2, "0")}`;
+        const price = Math.floor(300 + durationHours * 70);
         const selectedClass = provider.classes[Math.floor(Math.random() * provider.classes.length)];
 
         newRoutes.push({
@@ -145,7 +226,9 @@ function generateLocalTripsForDate(dateStr) {
           classesAvailable: provider.classes,
           seatsTotal: 72,
           seatsAvailable: Math.floor(15 + Math.random() * 30),
-          seatLayout: Array(72).fill(null).map((_, idx) => Math.random() > 0.6 ? null : "booked")
+          seatLayout: Array(72)
+            .fill(null)
+            .map((_, idx) => (Math.random() > 0.6 ? null : "booked"))
         });
       }
 
@@ -153,17 +236,20 @@ function generateLocalTripsForDate(dateStr) {
       const flightCount = 1;
       for (let f = 0; f < flightCount; f++) {
         const provider = TRAVEL_PROVIDERS.flight[Math.floor(Math.random() * TRAVEL_PROVIDERS.flight.length)];
-        const depHour = 8 + (f * 6);
+        const depHour = 8 + f * 6;
         const depMin = [0, 15, 45][Math.floor(Math.random() * 3)];
         const durationHours = 2 + Math.floor(Math.random() * 2);
         const durationMins = [0, 30][Math.floor(Math.random() * 2)];
-        
-        const depTime = `${String(depHour).padStart(2, '0')}:${String(depMin).padStart(2, '0')}`;
+
+        const depTime = `${String(depHour).padStart(2, "0")}:${String(depMin).padStart(2, "0")}`;
         let arrHour = (depHour + durationHours) % 24;
-        let arrMin = (depMin + durationMins);
-        if (arrMin >= 60) { arrHour = (arrHour + 1) % 24; arrMin -= 60; }
-        const arrTime = `${String(arrHour).padStart(2, '0')}:${String(arrMin).padStart(2, '0')}`;
-        const price = Math.floor(3000 + (durationHours * 800));
+        let arrMin = depMin + durationMins;
+        if (arrMin >= 60) {
+          arrHour = (arrHour + 1) % 24;
+          arrMin -= 60;
+        }
+        const arrTime = `${String(arrHour).padStart(2, "0")}:${String(arrMin).padStart(2, "0")}`;
+        const price = Math.floor(3000 + durationHours * 800);
 
         newRoutes.push({
           id: generateId("FLT"),
@@ -180,7 +266,9 @@ function generateLocalTripsForDate(dateStr) {
           price,
           seatsTotal: 180,
           seatsAvailable: Math.floor(30 + Math.random() * 80),
-          seatLayout: Array(180).fill(null).map((_, idx) => Math.random() > 0.65 ? null : "booked")
+          seatLayout: Array(180)
+            .fill(null)
+            .map((_, idx) => (Math.random() > 0.65 ? null : "booked"))
         });
       }
     }
@@ -203,9 +291,9 @@ window.dbAPI = {
           .eq("origin", origin)
           .eq("destination", destination)
           .eq("date", dateStr);
-        
+
         if (error) throw error;
-        
+
         // If no routes found in Cloud DB for this search query, generate and upload them
         if (data.length === 0) {
           console.log(`Supabase: No routes for date ${dateStr}. Generating dynamically...`);
@@ -219,11 +307,11 @@ window.dbAPI = {
         console.error("Supabase getRoutes failed, falling back to LocalStorage: ", err);
       }
     }
-    
+
     // Fallback: LocalStorage
     const db = getDB();
-    let localMatches = db.routes.filter(r => 
-      r.type === type && r.origin === origin && r.destination === destination && r.date === dateStr
+    let localMatches = db.routes.filter(
+      (r) => r.type === type && r.origin === origin && r.destination === destination && r.date === dateStr
     );
     if (localMatches.length === 0) {
       const generated = generateLocalTripsForDate(dateStr);
@@ -245,7 +333,7 @@ window.dbAPI = {
         console.error("Supabase addRoute failed, falling back to LocalStorage: ", err);
       }
     }
-    
+
     const db = getDB();
     db.routes.push(route);
     saveDB(db);
@@ -263,9 +351,9 @@ window.dbAPI = {
         console.error("Supabase deleteRoute failed, falling back to LocalStorage: ", err);
       }
     }
-    
+
     const db = getDB();
-    db.routes = db.routes.filter(r => r.id !== routeId);
+    db.routes = db.routes.filter((r) => r.id !== routeId);
     saveDB(db);
     return true;
   },
@@ -310,14 +398,16 @@ window.dbAPI = {
         console.error("Supabase getBookingById failed, falling back to LocalStorage: ", err);
       }
     }
-    return getDB().bookings.find(b => b.id === bookingId) || null;
+    return getDB().bookings.find((b) => b.id === bookingId) || null;
   },
 
   // 7. Save a new booking (Checkout completion)
   async addBooking(booking) {
     if (window.useSupabase) {
       try {
-        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        const {
+          data: { session }
+        } = await window.supabaseClient.auth.getSession();
         if (session && session.user) {
           booking.user_id = session.user.id;
         }
@@ -328,7 +418,7 @@ window.dbAPI = {
         console.error("Supabase addBooking failed, falling back to LocalStorage: ", err);
       }
     }
-    
+
     const db = getDB();
     db.bookings.push(booking);
     saveDB(db);
@@ -349,9 +439,9 @@ window.dbAPI = {
         console.error("Supabase updateRouteSeats failed: ", err);
       }
     }
-    
+
     const db = getDB();
-    const idx = db.routes.findIndex(r => r.id === routeId);
+    const idx = db.routes.findIndex((r) => r.id === routeId);
     if (idx > -1) {
       db.routes[idx].seatLayout = seatLayout;
       db.routes[idx].seatsAvailable = seatsAvailable;
@@ -375,7 +465,7 @@ window.dbAPI = {
           .update({ seatLayout: seatLayout, seatsAvailable: seatsAvailable })
           .eq("id", routeId);
         if (routeErr) throw routeErr;
-        
+
         return true;
       } catch (err) {
         console.error("Supabase cancelBooking failed, falling back to LocalStorage: ", err);
@@ -383,11 +473,11 @@ window.dbAPI = {
     }
 
     const db = getDB();
-    const bIdx = db.bookings.findIndex(b => b.id === bookingId);
+    const bIdx = db.bookings.findIndex((b) => b.id === bookingId);
     if (bIdx > -1) {
       db.bookings[bIdx].status = "Cancelled";
     }
-    const rIdx = db.routes.findIndex(r => r.id === routeId);
+    const rIdx = db.routes.findIndex((r) => r.id === routeId);
     if (rIdx > -1) {
       db.routes[rIdx].seatLayout = seatLayout;
       db.routes[rIdx].seatsAvailable = seatsAvailable;
@@ -415,7 +505,9 @@ window.dbAPI = {
   async addPassenger(passenger) {
     if (window.useSupabase) {
       try {
-        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        const {
+          data: { session }
+        } = await window.supabaseClient.auth.getSession();
         if (session && session.user) {
           passenger.user_id = session.user.id;
         }
@@ -426,7 +518,7 @@ window.dbAPI = {
         console.error("Supabase addPassenger failed, falling back to LocalStorage: ", err);
       }
     }
-    
+
     const db = getDB();
     db.passengers.push(passenger);
     saveDB(db);
@@ -444,9 +536,9 @@ window.dbAPI = {
         console.error("Supabase deletePassenger failed, falling back to LocalStorage: ", err);
       }
     }
-    
+
     const db = getDB();
-    db.passengers = db.passengers.filter(p => p.id !== passengerId);
+    db.passengers = db.passengers.filter((p) => p.id !== passengerId);
     saveDB(db);
     return true;
   },
@@ -457,15 +549,21 @@ window.dbAPI = {
       try {
         const { data: bData, error: bErr } = await window.supabaseClient.from("bookings").select("status, billing");
         if (bErr) throw bErr;
-        
-        const { count: routesCount, error: rErr } = await window.supabaseClient.from("routes").select("*", { count: 'exact', head: true });
+
+        const { count: routesCount, error: rErr } = await window.supabaseClient
+          .from("routes")
+          .select("*", { count: "exact", head: true });
         if (rErr) throw rErr;
-        
-        const { count: paxCount, error: pErr } = await window.supabaseClient.from("passengers").select("*", { count: 'exact', head: true });
+
+        const { count: paxCount, error: pErr } = await window.supabaseClient
+          .from("passengers")
+          .select("*", { count: "exact", head: true });
         if (pErr) throw pErr;
 
         const totalBookingsCount = bData.length;
-        const totalRevenue = bData.filter(b => b.status === "Confirmed").reduce((sum, b) => sum + b.billing.grandTotal, 0);
+        const totalRevenue = bData
+          .filter((b) => b.status === "Confirmed")
+          .reduce((sum, b) => sum + b.billing.grandTotal, 0);
 
         return {
           totalBookingsCount,
@@ -480,7 +578,7 @@ window.dbAPI = {
     }
 
     const db = getDB();
-    const activeBookings = db.bookings.filter(b => b.status === "Confirmed");
+    const activeBookings = db.bookings.filter((b) => b.status === "Confirmed");
     return {
       totalBookingsCount: db.bookings.length,
       totalRevenue: activeBookings.reduce((sum, b) => sum + b.billing.grandTotal, 0),
@@ -513,7 +611,7 @@ window.dbAPI = {
     for (let i = 0; i < 3; i++) {
       const nextDate = new Date(today);
       nextDate.setDate(today.getDate() + i);
-      const dateStr = nextDate.toISOString().split('T')[0];
+      const dateStr = nextDate.toISOString().split("T")[0];
       const generated = generateLocalTripsForDate(dateStr);
       db.routes = [...db.routes, ...generated];
     }

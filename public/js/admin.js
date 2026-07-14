@@ -3,7 +3,7 @@
 // Renders the main administration panel views
 async function initAdminView() {
   const appView = document.getElementById("app-view");
-  
+
   let stats = { totalRevenue: 0, totalBookingsCount: 0, totalPassengers: 0, totalRoutes: 0 };
   let routes = [];
   let bookings = [];
@@ -12,12 +12,14 @@ async function initAdminView() {
     stats = await window.dbAPI.getAdminStats();
     routes = await window.dbAPI.getAllRoutes();
     bookings = await window.dbAPI.getAllSystemBookings();
-    
+
     // Supplement stats counts if local storage fallback returns them directly
     if (routes.length && !stats.totalRoutes) stats.totalRoutes = routes.length;
     if (bookings.length && !stats.totalBookingsCount) {
       stats.totalBookingsCount = bookings.length;
-      stats.totalRevenue = bookings.filter(b => b.status === "Confirmed").reduce((sum, b) => sum + b.billing.grandTotal, 0);
+      stats.totalRevenue = bookings
+        .filter((b) => b.status === "Confirmed")
+        .reduce((sum, b) => sum + b.billing.grandTotal, 0);
     }
   } catch (err) {
     console.error("Failed to load admin panel data: ", err);
@@ -94,14 +96,14 @@ async function initAdminView() {
                 <div class="form-group">
                   <label>Origin</label>
                   <select id="route-origin" class="form-control" required>
-                    ${CITIES.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    ${CITIES.map((c) => `<option value="${c}">${c}</option>`).join("")}
                   </select>
                 </div>
 
                 <div class="form-group">
                   <label>Destination</label>
                   <select id="route-destination" class="form-control" required>
-                    ${CITIES.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    ${CITIES.map((c) => `<option value="${c}">${c}</option>`).join("")}
                   </select>
                 </div>
 
@@ -148,7 +150,11 @@ async function initAdminView() {
                   </tr>
                 </thead>
                 <tbody>
-                  ${routes.slice(-15).reverse().map(r => `
+                  ${routes
+                    .slice(-15)
+                    .reverse()
+                    .map(
+                      (r) => `
                     <tr>
                       <td>${r.id}</td>
                       <td>${r.type.toUpperCase()}</td>
@@ -161,7 +167,9 @@ async function initAdminView() {
                         <button class="btn-delete-route btn-danger-link" data-id="${r.id}">Delete</button>
                       </td>
                     </tr>
-                  `).join('')}
+                  `
+                    )
+                    .join("")}
                 </tbody>
               </table>
             </div>
@@ -186,22 +194,32 @@ async function initAdminView() {
                   </tr>
                 </thead>
                 <tbody>
-                  ${bookings.length === 0 ? '<tr><td colspan="7" class="text-center">No bookings placed yet.</td></tr>' : bookings.slice().reverse().map(b => `
+                  ${
+                    bookings.length === 0
+                      ? '<tr><td colspan="7" class="text-center">No bookings placed yet.</td></tr>'
+                      : bookings
+                          .slice()
+                          .reverse()
+                          .map(
+                            (b) => `
                     <tr>
                       <td><strong>${b.id}</strong></td>
                       <td>${b.type.toUpperCase()}</td>
                       <td>
-                        <div>${b.passengers[0]?.name || 'N/A'}</div>
+                        <div>${b.passengers[0]?.name || "N/A"}</div>
                         <small class="text-muted">${b.email} | ${b.mobile}</small>
                       </td>
                       <td>${b.origin} ➔ ${b.destination} <br> <small>${b.date} (${b.departureTime})</small></td>
-                      <td>${b.seats.join(', ')}</td>
+                      <td>${b.seats.join(", ")}</td>
                       <td>₹${b.billing.grandTotal}</td>
                       <td>
                         <span class="status-badge ${b.status.toLowerCase()}">${b.status}</span>
                       </td>
                     </tr>
-                  `).join('')}
+                  `
+                          )
+                          .join("")
+                  }
                 </tbody>
               </table>
             </div>
@@ -215,13 +233,13 @@ async function initAdminView() {
   function bindAdminEvents() {
     // Tabs switching
     const tabs = document.querySelectorAll(".admin-tab");
-    tabs.forEach(tab => {
+    tabs.forEach((tab) => {
       tab.addEventListener("click", (e) => {
-        tabs.forEach(t => t.classList.remove("active"));
+        tabs.forEach((t) => t.classList.remove("active"));
         e.currentTarget.classList.add("active");
-        
+
         const targetId = e.currentTarget.getAttribute("data-target");
-        document.querySelectorAll(".admin-content-panel").forEach(panel => {
+        document.querySelectorAll(".admin-content-panel").forEach((panel) => {
           panel.style.display = "none";
         });
         document.getElementById(targetId).style.display = "block";
@@ -231,7 +249,7 @@ async function initAdminView() {
     // Set default route datepicker min value to today
     const datepicker = document.getElementById("route-date");
     if (datepicker) {
-      const todayStr = new Date().toISOString().split('T')[0];
+      const todayStr = new Date().toISOString().split("T")[0];
       datepicker.setAttribute("min", todayStr);
       datepicker.value = todayStr;
     }
@@ -241,7 +259,7 @@ async function initAdminView() {
     if (addRouteForm) {
       addRouteForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        
+
         const type = document.getElementById("route-type").value;
         const provider = document.getElementById("route-provider").value.trim();
         const origin = document.getElementById("route-origin").value;
@@ -260,7 +278,7 @@ async function initAdminView() {
         const depParts = depTime.split(":");
         let depHour = parseInt(depParts[0]);
         let depMin = parseInt(depParts[1]);
-        
+
         // Simple duration parser: e.g. "3h 15m" or just "2h"
         let durHour = 2;
         let durMin = 0;
@@ -270,23 +288,28 @@ async function initAdminView() {
         if (minMatch) durMin = parseInt(minMatch[1]);
 
         let arrHour = (depHour + durHour) % 24;
-        let arrMin = (depMin + durMin);
+        let arrMin = depMin + durMin;
         if (arrMin >= 60) {
           arrHour = (arrHour + 1) % 24;
           arrMin = arrMin - 60;
         }
-        const arrTime = `${String(arrHour).padStart(2, '0')}:${String(arrMin).padStart(2, '0')}`;
+        const arrTime = `${String(arrHour).padStart(2, "0")}:${String(arrMin).padStart(2, "0")}`;
 
         // Create route record
         const prefix = type === "bus" ? "BUS" : type === "train" ? "TRN" : "FLT";
         const totalSeats = type === "bus" ? 40 : type === "train" ? 72 : 180;
-        
+
         const newRoute = {
           id: `${prefix}-${Math.floor(100000 + Math.random() * 900000)}`,
           type,
           provider,
           rating: parseFloat((3.8 + Math.random() * 1.1).toFixed(1)),
-          amenities: type === "bus" ? ["AC", "Charging Port"] : type === "train" ? ["AC"] : ["Cabin Baggage 7kg", "Check-in Baggage 15kg"],
+          amenities:
+            type === "bus"
+              ? ["AC", "Charging Port"]
+              : type === "train"
+                ? ["AC"]
+                : ["Cabin Baggage 7kg", "Check-in Baggage 15kg"],
           origin,
           destination,
           date,
@@ -311,14 +334,14 @@ async function initAdminView() {
           console.error("Failed to add route: ", err);
           showNotification("Failed to add route.", "error");
         }
-        
+
         // Refresh UI
         await initAdminView();
       });
     }
 
     // Delete route handler
-    document.querySelectorAll(".btn-delete-route").forEach(btn => {
+    document.querySelectorAll(".btn-delete-route").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         const id = e.currentTarget.getAttribute("data-id");
         try {

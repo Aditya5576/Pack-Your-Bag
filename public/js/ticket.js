@@ -3,7 +3,7 @@
 async function initTicketView(params) {
   const appView = document.getElementById("app-view");
   const bookingId = params.bookingId;
-  
+
   if (!bookingId) {
     navigateTo("#/");
     return;
@@ -16,7 +16,7 @@ async function initTicketView(params) {
   } catch (err) {
     console.error("Failed to fetch booking details: ", err);
   }
-  
+
   if (!booking) {
     appView.innerHTML = `
       <div class="container text-center" style="margin-top: 50px;">
@@ -88,7 +88,7 @@ async function initTicketView(params) {
             <div class="ticket-row">
               <div class="col">
                 <span class="lbl">Passengers</span>
-                <span class="val">${booking.passengers.map(p => p.name).join(", ")}</span>
+                <span class="val">${booking.passengers.map((p) => p.name).join(", ")}</span>
               </div>
               <div class="col text-right">
                 <span class="lbl">Seat Number(s)</span>
@@ -118,7 +118,7 @@ async function initTicketView(params) {
           <h3>Payment Receipt</h3>
           <hr>
           <div class="invoice-meta-rows">
-            <p><strong>Receipt No:</strong> REC-${booking.id.split('-')[1]}</p>
+            <p><strong>Receipt No:</strong> REC-${booking.id.split("-")[1]}</p>
             <p><strong>Payment Status:</strong> Paid (via Razorpay)</p>
             <p><strong>Mobile No:</strong> +91 ${booking.mobile}</p>
           </div>
@@ -128,12 +128,16 @@ async function initTicketView(params) {
               <span>Ticket Base Fare (${booking.seats.length} Seats)</span>
               <span>₹${booking.billing.baseFare}</span>
             </div>
-            ${booking.billing.discount > 0 ? `
+            ${
+              booking.billing.discount > 0
+                ? `
               <div class="bill-row promo">
                 <span>Coupon Promo Discount</span>
                 <span>-₹${booking.billing.discount}</span>
               </div>
-            ` : ''}
+            `
+                : ""
+            }
             <div class="bill-row">
               <span>GST Tax (18%)</span>
               <span>₹${booking.billing.gst}</span>
@@ -177,21 +181,21 @@ async function initTicketView(params) {
     const originalText = downloadBtn.innerHTML;
     downloadBtn.innerHTML = "Generating PDF...";
     downloadBtn.setAttribute("disabled", "true");
-    
+
     const element = document.getElementById("ticket-pass-print");
     try {
       const options = {
         margin: 5,
         filename: `${booking.id}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
+        image: { type: "jpeg", quality: 0.95 },
         html2canvas: { scale: 1.8, useCORS: true, logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
       };
-      
+
       if (window.useSupabase) {
         // Direct link to public Supabase Storage bucket
         const publicUrl = `https://${window.SUPABASE_URL.split("//")[1]}/storage/v1/object/public/tickets/${booking.id}.pdf`;
-        window.open(publicUrl, '_blank');
+        window.open(publicUrl, "_blank");
       } else {
         // Fallback local download using html2pdf
         await html2pdf().set(options).from(element).save();
@@ -214,32 +218,30 @@ async function initTicketView(params) {
 // Background compiler that pushes ticket PDFs to Supabase tickets bucket
 async function generateAndUploadTicketPDF(booking) {
   if (!window.useSupabase || !window.supabaseClient) return;
-  
+
   // Wait to ensure QR Code rendering completes
   setTimeout(async () => {
     const element = document.getElementById("ticket-pass-print");
     if (!element) return;
-    
+
     try {
       const options = {
         margin: 5,
         filename: `${booking.id}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
+        image: { type: "jpeg", quality: 0.95 },
         html2canvas: { scale: 1.5, useCORS: true, logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
       };
-      
+
       // Generate PDF blob
-      const pdfBlob = await html2pdf().set(options).from(element).output('blob');
-      
+      const pdfBlob = await html2pdf().set(options).from(element).output("blob");
+
       // Upload PDF to Supabase Storage tickets bucket
-      const { data, error } = await window.supabaseClient.storage
-        .from('tickets')
-        .upload(`${booking.id}.pdf`, pdfBlob, {
-          contentType: 'application/pdf',
-          upsert: true
-        });
-        
+      const { data, error } = await window.supabaseClient.storage.from("tickets").upload(`${booking.id}.pdf`, pdfBlob, {
+        contentType: "application/pdf",
+        upsert: true
+      });
+
       if (error) throw error;
       console.log("Supabase Storage: Ticket PDF uploaded to cloud: ", data.path);
     } catch (err) {
@@ -252,11 +254,11 @@ async function generateAndUploadTicketPDF(booking) {
 function generateQRCodeImage(booking) {
   const qrContainer = document.getElementById("qrcode-canvas");
   if (!qrContainer) return;
-  
+
   qrContainer.innerHTML = ""; // Clear
-  
+
   const qrText = `BookingID: ${booking.id}\nProvider: ${booking.provider}\nRoute: ${booking.origin} to ${booking.destination}\nSeats: ${booking.seats.join(",")}\nDate: ${booking.date}`;
-  
+
   try {
     // Check if QRCode is available from script library
     if (typeof QRCode !== "undefined") {

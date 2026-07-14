@@ -8,13 +8,13 @@ Developed by: **Aditya Patil**
 
 ## 🚀 Key Features
 
-* **Unified Travel Search**: Seamless query panel supporting Bus (🚌), Train (🚆), and Flight (✈️) search queries.
-* **Smart Filter & Sort**: Client-side filters (price slider, operator checkboxes) and sorting rules (cheapest, fastest, earliest departure).
-* **Interactive Seat Maps**: Custom layouts built dynamically based on selected vehicle types (Bus 2x2 sleeper grids, Train compartment berths, Flight 3x3 economy rows).
-* **Simulated Razorpay Modal**: Mock checkout gateway with card, UPI, and netbanking fields, complete with animated transaction processing screens.
-* **Printable Boarding Pass**: High-quality ticket layouts utilizing specialized browser print `@media print` CSS configurations to support clean invoice downloads.
-* **Admin Dashboard**: System diagnostics panel to track revenue and bookings, alongside a **Route Planner Wizard** that publishes new searchable schedules.
-* **Dual Database Architecture**: Connects to **Supabase Cloud PostgreSQL** with an automated, seamless fallback to browser **LocalStorage** if credentials are unconfigured or offline.
+- **Unified Travel Search**: Seamless query panel supporting Bus (🚌), Train (🚆), and Flight (✈️) search queries.
+- **Smart Filter & Sort**: Client-side filters (price slider, operator checkboxes) and sorting rules (cheapest, fastest, earliest departure).
+- **Interactive Seat Maps**: Custom layouts built dynamically based on selected vehicle types (Bus 2x2 sleeper grids, Train compartment berths, Flight 3x3 economy rows).
+- **Simulated Razorpay Modal**: Mock checkout gateway with card, UPI, and netbanking fields, complete with animated transaction processing screens.
+- **Printable Boarding Pass**: High-quality ticket layouts utilizing specialized browser print `@media print` CSS configurations to support clean invoice downloads.
+- **Admin Dashboard**: System diagnostics panel to track revenue and bookings, alongside a **Route Planner Wizard** that publishes new searchable schedules.
+- **Dual Database Architecture**: Connects to **Supabase Cloud PostgreSQL** with an automated, seamless fallback to browser **LocalStorage** if credentials are unconfigured or offline.
 
 ---
 
@@ -56,6 +56,7 @@ BookMYTrip/
 ## ⚙️ Setup & Connection Instructions
 
 ### 1. Cloud Database Integration (Supabase)
+
 To establish the live database connection, set up a free project on [Supabase](https://supabase.com/) and follow these steps:
 
 1. **Table Creations**:
@@ -79,6 +80,7 @@ To establish the live database connection, set up a free project on [Supabase](h
      ```
 
 ### 2. Local Development Server
+
 To launch the application locally, open a terminal in the project directory:
 
 1. **Install Dev Dependencies**:
@@ -97,10 +99,10 @@ To launch the application locally, open a terminal in the project directory:
 
 The database schema utilizes strict row-level filters to secure user information:
 
-* **Travel Routes (`routes` table)**:
+- **Travel Routes (`routes` table)**:
   - Read access (`SELECT`) is granted to the `public` so all visitors can search for trips.
   - Modifying routes is restricted to authenticated operators or admin users.
-* **Bookings (`bookings` table)** & **Passengers (`passengers` table)**:
+- **Bookings (`bookings` table)** & **Passengers (`passengers` table)**:
   - Managed strictly by the policy: `auth.uid() = user_id`.
   - When a booking is placed, it is automatically tagged with the active traveler's unique Session ID.
   - Users can only view, modify, or cancel their own bookings. Database data remains private and invisible to unauthorized callers.
@@ -108,6 +110,7 @@ The database schema utilizes strict row-level filters to secure user information
 ---
 
 ## 🔄 LocalStorage Fallback
+
 If you open the project without entering Supabase credentials, the console will print:
 `Supabase keys not configured. App is running in LocalStorage simulation mode.`
 

@@ -45,7 +45,7 @@ async function initAppState() {
   } catch (err) {
     console.error("Failed to load passengers on boot: ", err);
   }
-  
+
   // Default logged in user details
   window.appState.currentUser = {
     name: "Aditya Patil",
@@ -62,7 +62,7 @@ async function initAppState() {
       const { data } = await window.supabaseClient.auth.getSession();
       if (data.session && data.session.user) {
         const user = data.session.user;
-        const isAnon = user.is_anonymous || (!user.identities || user.identities.length === 0);
+        const isAnon = user.is_anonymous || !user.identities || user.identities.length === 0;
         if (!isAnon) {
           const meta = user.user_metadata || {};
           window.appState.currentUser.name = meta.full_name || meta.user_name || "GitHub Traveler";
@@ -74,11 +74,11 @@ async function initAppState() {
       console.error("Failed to check active auth session: ", err);
     }
   }
-  
+
   // Set search date default to today
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   window.appState.currentSearch.date = today;
-  
+
   // Sync navigation menu active states
   updateNavbarActiveState();
 }
@@ -86,13 +86,13 @@ async function initAppState() {
 // Router function that intercepts URL hash and swaps templates
 function router() {
   const hash = window.location.hash;
-  
+
   // Parse query parameters if any (e.g. #/ticket?bookingId=PYB-1234)
   const path = hash.split("?")[0] || "";
   const queryParams = parseQueryParams(hash);
-  
+
   const renderer = routes[path] || renderNotFoundView;
-  
+
   // Set loading state (optional, for visual polish)
   const appView = document.getElementById("app-view");
   if (appView) {
@@ -102,7 +102,7 @@ function router() {
         <p>Loading journey details...</p>
       </div>
     `;
-    
+
     // Execute renderer after short timeout to let transitions run
     setTimeout(() => {
       renderer(queryParams);
@@ -116,7 +116,7 @@ function router() {
 function parseQueryParams(hash) {
   const params = {};
   if (!hash.includes("?")) return params;
-  
+
   const queryString = hash.split("?")[1];
   const pairs = queryString.split("&");
   for (const pair of pairs) {
@@ -137,8 +137,8 @@ function navigateTo(hash) {
 function updateNavbarActiveState() {
   const hash = window.location.hash || "#/";
   const navLinks = document.querySelectorAll(".nav-link");
-  
-  navLinks.forEach(link => {
+
+  navLinks.forEach((link) => {
     const linkHash = link.getAttribute("href");
     if (linkHash === hash || (linkHash === "#/" && hash === "")) {
       link.classList.add("active");
@@ -154,7 +154,7 @@ function updateNavbarActiveState() {
 async function updateAuthUI() {
   const container = document.getElementById("nav-auth-container");
   if (!container) return;
-  
+
   if (!window.useSupabase || !window.supabaseClient) {
     container.innerHTML = `<span class="badge badge-secondary" style="margin-left: 10px;">Local DB Only</span>`;
     return;
@@ -164,8 +164,8 @@ async function updateAuthUI() {
     const { data } = await window.supabaseClient.auth.getSession();
     if (data.session && data.session.user) {
       const user = data.session.user;
-      const isAnon = user.is_anonymous || (!user.identities || user.identities.length === 0);
-      
+      const isAnon = user.is_anonymous || !user.identities || user.identities.length === 0;
+
       if (!isAnon) {
         // Authenticated GitHub user
         const meta = user.user_metadata || {};
@@ -205,16 +205,16 @@ function showNotification(message, type = "success") {
     container.className = "notification-container";
     document.body.appendChild(container);
   }
-  
+
   const notification = document.createElement("div");
   notification.className = `notification-toast ${type} animate-slide-in`;
   notification.innerHTML = `
     <span class="notification-icon">${type === "success" ? "✓" : type === "error" ? "✗" : "ℹ"}</span>
     <span class="notification-text">${message}</span>
   `;
-  
+
   container.appendChild(notification);
-  
+
   // Auto remove after 3.5 seconds
   setTimeout(() => {
     notification.classList.add("animate-fade-out");

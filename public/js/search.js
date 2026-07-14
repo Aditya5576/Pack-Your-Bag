@@ -4,14 +4,14 @@
 function initHomeView() {
   const appView = document.getElementById("app-view");
   const searchState = window.appState.currentSearch;
-  
+
   // Set default tomorrow date if empty
   if (!searchState.date) {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    searchState.date = tomorrow.toISOString().split('T')[0];
+    searchState.date = tomorrow.toISOString().split("T")[0];
   }
-  
+
   appView.innerHTML = `
     <!-- Hero Header Banner -->
     <section class="hero-banner">
@@ -27,13 +27,13 @@ function initHomeView() {
       <div class="search-card">
         <!-- Travel Mode Selector Tabs -->
         <div class="mode-tabs">
-          <button class="mode-tab ${searchState.type === 'bus' ? 'active' : ''}" data-mode="bus">
+          <button class="mode-tab ${searchState.type === "bus" ? "active" : ""}" data-mode="bus">
             <span class="icon">🚌</span> Bus
           </button>
-          <button class="mode-tab ${searchState.type === 'train' ? 'active' : ''}" data-mode="train">
+          <button class="mode-tab ${searchState.type === "train" ? "active" : ""}" data-mode="train">
             <span class="icon">🚆</span> Train
           </button>
-          <button class="mode-tab ${searchState.type === 'flight' ? 'active' : ''}" data-mode="flight">
+          <button class="mode-tab ${searchState.type === "flight" ? "active" : ""}" data-mode="flight">
             <span class="icon">✈️</span> Flight
           </button>
         </div>
@@ -122,15 +122,15 @@ function bindHomeEvents() {
   const paxInput = document.getElementById("search-passengers");
   const swapBtn = document.getElementById("btn-swap-cities");
   const searchBtn = document.getElementById("btn-main-search");
-  
+
   // Set min date for datepicker to today
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toISOString().split("T")[0];
   dateInput.setAttribute("min", todayStr);
 
   // Tab selections
-  document.querySelectorAll(".mode-tab").forEach(tab => {
+  document.querySelectorAll(".mode-tab").forEach((tab) => {
     tab.addEventListener("click", (e) => {
-      document.querySelectorAll(".mode-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".mode-tab").forEach((t) => t.classList.remove("active"));
       const target = e.currentTarget;
       target.classList.add("active");
       window.appState.currentSearch.type = target.getAttribute("data-mode");
@@ -151,15 +151,23 @@ function bindHomeEvents() {
   });
 
   // Save changes to state on input
-  fromInput.addEventListener("input", (e) => { window.appState.currentSearch.from = e.target.value; });
-  toInput.addEventListener("input", (e) => { window.appState.currentSearch.to = e.target.value; });
-  dateInput.addEventListener("change", (e) => { window.appState.currentSearch.date = e.target.value; });
-  paxInput.addEventListener("change", (e) => { window.appState.currentSearch.passengers = parseInt(e.target.value) || 1; });
+  fromInput.addEventListener("input", (e) => {
+    window.appState.currentSearch.from = e.target.value;
+  });
+  toInput.addEventListener("input", (e) => {
+    window.appState.currentSearch.to = e.target.value;
+  });
+  dateInput.addEventListener("change", (e) => {
+    window.appState.currentSearch.date = e.target.value;
+  });
+  paxInput.addEventListener("change", (e) => {
+    window.appState.currentSearch.passengers = parseInt(e.target.value) || 1;
+  });
 
   // Main search action
   searchBtn.addEventListener("click", () => {
     const searchVal = window.appState.currentSearch;
-    
+
     // Validations
     if (!searchVal.from.trim()) {
       showNotification("Please enter an origin city.", "error");
@@ -171,12 +179,12 @@ function bindHomeEvents() {
       toInput.focus();
       return;
     }
-    if (!CITIES.map(c => c.toLowerCase()).includes(searchVal.from.trim().toLowerCase())) {
-      showNotification(`Origin city is invalid. Select from: ${CITIES.join(', ')}`, "error");
+    if (!CITIES.map((c) => c.toLowerCase()).includes(searchVal.from.trim().toLowerCase())) {
+      showNotification(`Origin city is invalid. Select from: ${CITIES.join(", ")}`, "error");
       return;
     }
-    if (!CITIES.map(c => c.toLowerCase()).includes(searchVal.to.trim().toLowerCase())) {
-      showNotification(`Destination city is invalid. Select from: ${CITIES.join(', ')}`, "error");
+    if (!CITIES.map((c) => c.toLowerCase()).includes(searchVal.to.trim().toLowerCase())) {
+      showNotification(`Destination city is invalid. Select from: ${CITIES.join(", ")}`, "error");
       return;
     }
     if (searchVal.from.trim().toLowerCase() === searchVal.to.trim().toLowerCase()) {
@@ -193,8 +201,8 @@ function bindHomeEvents() {
     }
 
     // Format inputs to Title Case matching database
-    window.appState.currentSearch.from = CITIES.find(c => c.toLowerCase() === searchVal.from.trim().toLowerCase());
-    window.appState.currentSearch.to = CITIES.find(c => c.toLowerCase() === searchVal.to.trim().toLowerCase());
+    window.appState.currentSearch.from = CITIES.find((c) => c.toLowerCase() === searchVal.from.trim().toLowerCase());
+    window.appState.currentSearch.to = CITIES.find((c) => c.toLowerCase() === searchVal.to.trim().toLowerCase());
 
     // Redirect to search view (dynamic seeding is handled by dbAPI)
     navigateTo("#/search");
@@ -205,7 +213,7 @@ function bindHomeEvents() {
 function setupAutocomplete(inputEl, listEl) {
   inputEl.addEventListener("focus", showList);
   inputEl.addEventListener("input", showList);
-  
+
   // Close list when clicking outside
   document.addEventListener("click", (e) => {
     if (e.target !== inputEl && e.target !== listEl) {
@@ -215,16 +223,16 @@ function setupAutocomplete(inputEl, listEl) {
 
   function showList() {
     const val = inputEl.value.toLowerCase();
-    const matches = CITIES.filter(city => city.toLowerCase().includes(val));
-    
+    const matches = CITIES.filter((city) => city.toLowerCase().includes(val));
+
     if (matches.length > 0) {
-      listEl.innerHTML = matches.map(city => `<div class="autocomplete-item">${city}</div>`).join('');
+      listEl.innerHTML = matches.map((city) => `<div class="autocomplete-item">${city}</div>`).join("");
       listEl.style.display = "block";
-      
-      listEl.querySelectorAll(".autocomplete-item").forEach(item => {
+
+      listEl.querySelectorAll(".autocomplete-item").forEach((item) => {
         item.addEventListener("click", () => {
           inputEl.value = item.textContent;
-          inputEl.dispatchEvent(new Event('input'));
+          inputEl.dispatchEvent(new Event("input"));
           listEl.style.display = "none";
         });
       });
@@ -238,7 +246,7 @@ function setupAutocomplete(inputEl, listEl) {
 async function initSearchView() {
   const appView = document.getElementById("app-view");
   const searchState = window.appState.currentSearch;
-  
+
   if (!searchState.from || !searchState.to || !searchState.date) {
     // If accessed directly without valid search state, redirect home
     navigateTo("#/");
@@ -248,12 +256,7 @@ async function initSearchView() {
   // Fetch from Database API (Supabase Cloud or LocalStorage fallback)
   let filteredTrips = [];
   try {
-    filteredTrips = await window.dbAPI.getRoutes(
-      searchState.type,
-      searchState.from,
-      searchState.to,
-      searchState.date
-    );
+    filteredTrips = await window.dbAPI.getRoutes(searchState.type, searchState.from, searchState.to, searchState.date);
   } catch (err) {
     console.error("Error loading route details: ", err);
   }
@@ -268,12 +271,12 @@ async function initSearchView() {
   // Primary rendering helper
   function renderResultsUI() {
     // Generate operators listing for filters
-    const availableOperators = [...new Set(filteredTrips.map(t => t.provider))];
-    
+    const availableOperators = [...new Set(filteredTrips.map((t) => t.provider))];
+
     // Apply client side filters
-    let displayTrips = filteredTrips.filter(trip => 
-      trip.price <= priceFilterVal &&
-      (operatorsFilter.length === 0 || operatorsFilter.includes(trip.provider))
+    let displayTrips = filteredTrips.filter(
+      (trip) =>
+        trip.price <= priceFilterVal && (operatorsFilter.length === 0 || operatorsFilter.includes(trip.provider))
     );
 
     // Apply sorting
@@ -284,10 +287,10 @@ async function initSearchView() {
     } else if (sortCriteria === "fastest") {
       displayTrips.sort((a, b) => {
         const getMins = (durStr) => {
-          const parts = durStr.split(' ');
+          const parts = durStr.split(" ");
           const h = parseInt(parts[0]) || 0;
           const m = parseInt(parts[1]) || 0;
-          return (h * 60) + m;
+          return h * 60 + m;
         };
         return getMins(a.duration) - getMins(b.duration);
       });
@@ -299,7 +302,7 @@ async function initSearchView() {
         <div class="search-header-summary card">
           <div class="summary-details">
             <span class="trip-icon">
-              ${searchState.type === 'bus' ? '🚌' : searchState.type === 'train' ? '🚆' : '✈️'}
+              ${searchState.type === "bus" ? "🚌" : searchState.type === "train" ? "🚆" : "✈️"}
             </span>
             <div>
               <h3>${searchState.from} to ${searchState.to}</h3>
@@ -315,9 +318,9 @@ async function initSearchView() {
             <div class="filter-group">
               <h4>Sort By</h4>
               <select id="sort-selector" class="form-control">
-                <option value="earliest" ${sortCriteria === 'earliest' ? 'selected' : ''}>Earliest Departure</option>
-                <option value="cheapest" ${sortCriteria === 'cheapest' ? 'selected' : ''}>Cheapest Price</option>
-                <option value="fastest" ${sortCriteria === 'fastest' ? 'selected' : ''}>Fastest Duration</option>
+                <option value="earliest" ${sortCriteria === "earliest" ? "selected" : ""}>Earliest Departure</option>
+                <option value="cheapest" ${sortCriteria === "cheapest" ? "selected" : ""}>Cheapest Price</option>
+                <option value="fastest" ${sortCriteria === "fastest" ? "selected" : ""}>Fastest Duration</option>
               </select>
             </div>
 
@@ -333,13 +336,17 @@ async function initSearchView() {
             <div class="filter-group">
               <h4>Travel Operators</h4>
               <div class="checkbox-list">
-                ${availableOperators.map(op => `
+                ${availableOperators
+                  .map(
+                    (op) => `
                   <label class="checkbox-label">
-                    <input type="checkbox" class="filter-op-check" value="${op}" ${operatorsFilter.includes(op) ? 'checked' : ''}>
+                    <input type="checkbox" class="filter-op-check" value="${op}" ${operatorsFilter.includes(op) ? "checked" : ""}>
                     ${op}
                   </label>
-                `).join('')}
-                ${availableOperators.length === 0 ? '<p class="text-muted">No operators</p>' : ''}
+                `
+                  )
+                  .join("")}
+                ${availableOperators.length === 0 ? '<p class="text-muted">No operators</p>' : ""}
               </div>
             </div>
           </aside>
@@ -349,17 +356,19 @@ async function initSearchView() {
             <h4 class="results-count">${displayTrips.length} options found</h4>
             
             <div class="results-list">
-              ${displayTrips.map(trip => `
+              ${displayTrips
+                .map(
+                  (trip) => `
                 <div class="trip-result-card card hover-trigger">
                   <div class="trip-card-main">
                     <!-- Operator Column -->
                     <div class="col-provider">
                       <div class="provider-logo-box">
-                        ${searchState.type === 'bus' ? '🚌' : searchState.type === 'train' ? '🚆' : '✈️'}
+                        ${searchState.type === "bus" ? "🚌" : searchState.type === "train" ? "🚆" : "✈️"}
                       </div>
                       <div>
                         <h4 class="provider-name">${trip.provider}</h4>
-                        ${trip.classSelected ? `<span class="badge badge-secondary">${trip.classSelected}</span>` : ''}
+                        ${trip.classSelected ? `<span class="badge badge-secondary">${trip.classSelected}</span>` : ""}
                         <div class="rating-stars">★ ${trip.rating.toFixed(1)}</div>
                       </div>
                     </div>
@@ -388,7 +397,7 @@ async function initSearchView() {
                         <span class="price">₹${trip.price}</span>
                         <span class="tax-info">+ GST (18%)</span>
                       </div>
-                      <div class="seat-warning ${trip.seatsAvailable <= 5 ? 'critical' : ''}">
+                      <div class="seat-warning ${trip.seatsAvailable <= 5 ? "critical" : ""}">
                         ${trip.seatsAvailable} seats left
                       </div>
                       <button class="btn btn-primary btn-select-trip" data-trip-id="${trip.id}">
@@ -400,20 +409,26 @@ async function initSearchView() {
                   <!-- Amenities Bar -->
                   <div class="trip-card-amenities">
                     <div class="amenities-list">
-                      ${trip.amenities.map(amenity => `<span class="amenity-pill">${amenity}</span>`).join('')}
+                      ${trip.amenities.map((amenity) => `<span class="amenity-pill">${amenity}</span>`).join("")}
                     </div>
                   </div>
                 </div>
-              `).join('')}
+              `
+                )
+                .join("")}
 
-              ${displayTrips.length === 0 ? `
+              ${
+                displayTrips.length === 0
+                  ? `
                 <div class="no-results-box card">
                   <span class="empty-icon">🔍</span>
                   <h3>No journeys match your filters</h3>
                   <p>Try expanding your price range or selecting different operators.</p>
                   <button id="btn-clear-filters" class="btn btn-outline">Reset Filters</button>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           </main>
         </div>
@@ -425,17 +440,17 @@ async function initSearchView() {
 
   function bindResultsEvents() {
     // Select Trip handler
-    document.querySelectorAll(".btn-select-trip").forEach(btn => {
+    document.querySelectorAll(".btn-select-trip").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const tripId = e.currentTarget.getAttribute("data-trip-id");
-        const selected = filteredTrips.find(t => t.id === tripId);
-        
+        const selected = filteredTrips.find((t) => t.id === tripId);
+
         // Save to state
         window.appState.selectedTrip = selected;
         window.appState.selectedSeats = [];
         window.appState.passengersDetails = [];
         window.appState.appliedCoupon = null;
-        
+
         navigateTo("#/seat-selection");
       });
     });
@@ -463,9 +478,9 @@ async function initSearchView() {
     }
 
     // Checkboxes event
-    document.querySelectorAll(".filter-op-check").forEach(chk => {
+    document.querySelectorAll(".filter-op-check").forEach((chk) => {
       chk.addEventListener("change", () => {
-        const checked = Array.from(document.querySelectorAll(".filter-op-check:checked")).map(c => c.value);
+        const checked = Array.from(document.querySelectorAll(".filter-op-check:checked")).map((c) => c.value);
         operatorsFilter = checked;
         renderResultsUI();
       });
@@ -488,5 +503,5 @@ async function initSearchView() {
 function formatDisplayDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
