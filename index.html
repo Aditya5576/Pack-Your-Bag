@@ -27,6 +27,7 @@
     <!-- CSS Stylesheets -->
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
   </head>
   <body>
     <!-- Header Navigation Menu -->
@@ -34,7 +35,12 @@
       <div class="navbar-container container">
         <a href="#/" class="navbar-brand"> <span>🎒</span> Pack Your Bags </a>
 
-        <nav>
+        <!-- Hamburger button — visible on mobile only -->
+        <button class="nav-toggle-btn" id="nav-hamburger" aria-label="Toggle navigation" style="display:none">
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav id="main-nav">
           <ul class="navbar-nav">
             <li><a href="#/" class="nav-link nav-home">Search Routes</a></li>
             <li><a href="#/my-trips" class="nav-link nav-trips">My Trips</a></li>

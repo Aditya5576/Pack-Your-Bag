@@ -1,0 +1,811 @@
+/* mobile.css - Complete Mobile Responsive Overrides */
+/* Covers every view: Navbar, Home, Search, Seat Selection, Checkout, Ticket, Profile, Admin, Modals */
+
+/* =============================================
+   0. GLOBAL MOBILE BASE
+   ============================================= */
+
+/* Prevent horizontal scroll & disable double-tap zoom */
+html {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* =============================================
+   1. NAVBAR — Mobile Hamburger Layout
+   ============================================= */
+@media (max-width: 768px) {
+  .navbar-header {
+    padding: 10px 0;
+  }
+
+  .navbar-container {
+    flex-wrap: wrap;
+    gap: 0;
+    position: relative;
+  }
+
+  .navbar-brand {
+    font-size: 18px;
+    flex: 1;
+  }
+
+  /* Hamburger toggle button - injected via JS below */
+  .nav-toggle-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: auto;
+  }
+
+  .nav-toggle-btn span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--text-secondary);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  nav {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  nav.nav-open {
+    max-height: 400px;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 0 12px 0;
+    border-top: 1px solid var(--glass-border);
+    margin-top: 8px;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 10px 14px;
+    font-size: 15px;
+    border-radius: var(--radius-sm);
+  }
+
+  #nav-auth-container {
+    padding: 8px 14px;
+    width: 100%;
+  }
+
+  #nav-auth-container button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =============================================
+   2. HOME PAGE — Hero & Search Card
+   ============================================= */
+@media (max-width: 768px) {
+  .hero-banner {
+    padding: 40px 0 80px 0;
+  }
+
+  .hero-content h1 {
+    font-size: 26px;
+    line-height: 1.3;
+    padding: 0 10px;
+  }
+
+  .hero-content p {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+
+  .search-section {
+    margin-top: -50px;
+  }
+
+  .search-card {
+    padding: 18px 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .mode-tabs {
+    gap: 6px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .mode-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mode-tab {
+    font-size: 13px;
+    padding: 8px 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .search-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .btn-swap {
+    transform: rotate(90deg);
+    margin: 0 auto;
+    width: 36px;
+    height: 36px;
+  }
+
+  .search-action-row {
+    margin-top: 16px;
+    justify-content: stretch;
+  }
+
+  .search-action-row .btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+  }
+}
+
+/* =============================================
+   3. OFFERS SECTION — Home Page Cards
+   ============================================= */
+@media (max-width: 768px) {
+  .offers-section {
+    margin-top: 28px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .offers-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .offer-card {
+    padding: 18px 16px;
+  }
+}
+
+/* =============================================
+   4. SEARCH RESULTS PAGE
+   ============================================= */
+@media (max-width: 768px) {
+  .search-results-page {
+    padding-top: 16px;
+  }
+
+  .search-header-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .summary-details {
+    gap: 10px;
+  }
+
+  .summary-details .trip-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
+
+  .summary-details h3 {
+    font-size: 15px;
+  }
+
+  .results-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Collapse filter sidebar on mobile */
+  .results-filters {
+    border-radius: var(--radius-md);
+  }
+
+  /* Result trip cards stack vertically */
+  .trip-card-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .col-provider {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .col-timings {
+    min-width: unset;
+    width: 100%;
+    justify-content: space-between;
+    flex: unset;
+  }
+
+  .col-price-action {
+    width: 100%;
+    min-width: unset;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .price-section {
+    margin-bottom: 0;
+  }
+
+  .price-section .price {
+    font-size: 20px;
+  }
+
+  .btn-select-trip {
+    width: auto;
+    padding: 10px 20px;
+    flex-shrink: 0;
+  }
+
+  .seat-warning {
+    font-size: 12px;
+    margin-bottom: 0;
+  }
+
+  .trip-card-amenities {
+    padding: 8px 14px;
+  }
+
+  .amenities-list {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+/* =============================================
+   5. SEAT SELECTION VIEW
+   ============================================= */
+@media (max-width: 768px) {
+  .booking-flow-container {
+    padding-top: 16px;
+  }
+
+  .booking-steps {
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .booking-steps .step {
+    font-size: 12px;
+  }
+
+  .booking-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .seat-grid-outer {
+    max-width: 100%;
+    padding: 16px 12px;
+  }
+
+  .seat-map-legend {
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .legend-item {
+    font-size: 12px;
+  }
+
+  /* Seat items - touch-friendly sizing */
+  .seat-item {
+    min-height: 36px;
+    max-height: 44px;
+    font-size: 11px;
+    border-radius: 5px;
+  }
+
+  /* Train berths */
+  .cabin-berths {
+    grid-template-columns: repeat(3, 1fr) 12px repeat(3, 1fr);
+    gap: 5px;
+  }
+
+  .side-berths .seat-item {
+    max-width: 50px;
+  }
+
+  /* Booking summary panel */
+  .booking-summary-panel {
+    order: -1;
+  }
+}
+
+/* =============================================
+   6. CHECKOUT VIEW
+   ============================================= */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .passenger-card-item {
+    padding: 14px 12px;
+    margin-bottom: 12px;
+  }
+
+  .p-card-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .coupon-input-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .coupon-input-group .btn {
+    width: 100%;
+  }
+
+  .saved-profiles-list {
+    gap: 6px;
+  }
+
+  .saved-profiles-list button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+/* =============================================
+   7. PAYMENT MODAL — Razorpay Overlay
+   ============================================= */
+@media (max-width: 768px) {
+  .razorpay-modal-box {
+    max-width: calc(100vw - 24px);
+    width: 100%;
+    margin: 0 12px;
+    border-radius: var(--radius-md);
+    /* Push modal toward top on small screens */
+    position: relative;
+    top: unset;
+  }
+
+  .payment-modal-overlay {
+    align-items: flex-end;
+    padding-bottom: 0;
+  }
+
+  .razorpay-modal-box {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .razorpay-header {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .razorpay-header .amount-header {
+    text-align: left;
+    flex: 1;
+  }
+
+  .razorpay-body {
+    padding: 14px 16px;
+  }
+
+  .payment-methods-tabs {
+    gap: 2px;
+  }
+
+  .pay-method-tab {
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+
+  .razorpay-footer {
+    padding: 12px 16px;
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .razorpay-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =============================================
+   8. TICKET / BOARDING PASS VIEW
+   ============================================= */
+@media (max-width: 768px) {
+  .success-banner {
+    padding: 20px 14px;
+    margin-top: 16px;
+  }
+
+  .success-icon {
+    font-size: 32px;
+  }
+
+  .booking-id-tag {
+    font-size: 12px;
+    padding: 4px 12px;
+    word-break: break-all;
+  }
+
+  .ticket-invoice-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .ticket-header {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ticket-brand {
+    font-size: 15px;
+  }
+
+  .ticket-body {
+    padding: 16px 14px;
+  }
+
+  .ticket-row {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .ticket-row.route-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .ticket-row .time {
+    font-size: 17px;
+  }
+
+  .ticket-row .val {
+    font-size: 14px;
+  }
+
+  .path-symbol {
+    margin: 0 8px;
+  }
+
+  .ticket-footer-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .qr-code-wrapper {
+    align-self: center;
+  }
+
+  .ticket-meta {
+    text-align: center;
+  }
+
+  .action-buttons-invoice {
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .action-buttons-invoice .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dashed-hr {
+    margin: 14px 0;
+  }
+}
+
+/* =============================================
+   9. MY TRIPS VIEW
+   ============================================= */
+@media (max-width: 768px) {
+  .my-trips-page {
+    padding-top: 16px;
+  }
+
+  .trips-tabs-wrapper {
+    margin-bottom: 16px;
+  }
+
+  .trips-tabs {
+    border-radius: var(--radius-sm);
+  }
+
+  .trips-tab {
+    font-size: 13px;
+    padding: 9px 6px;
+  }
+
+  .trip-summary-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .provider-tag {
+    font-size: 14px;
+  }
+
+  .trip-summary-body {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .trip-summary-locations {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .trip-summary-locations h4 {
+    font-size: 15px;
+  }
+
+  .trip-summary-footer {
+    flex-wrap: wrap;
+    justify-content: stretch;
+    gap: 8px;
+  }
+
+  .trip-summary-footer .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Cancel modal */
+  .cancel-modal-box {
+    max-width: calc(100vw - 32px);
+    padding: 18px 16px;
+  }
+
+  .cancel-modal-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cancel-modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =============================================
+   10. ADMIN DASHBOARD
+   ============================================= */
+@media (max-width: 768px) {
+  .admin-page-container {
+    padding-top: 16px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .metric-card {
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px;
+  }
+
+  .metric-card .m-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
+
+  .metric-card h3 {
+    font-size: 20px;
+  }
+
+  .admin-tabs-wrapper {
+    margin-bottom: 14px;
+  }
+
+  .admin-tab {
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+
+  .add-route-card h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  /* Admin form grid - single column on mobile */
+  .admin-page-container .form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 420px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================
+   11. PROFILE VIEW
+   ============================================= */
+@media (max-width: 768px) {
+  .profile-page-container {
+    padding-top: 16px;
+  }
+
+  .profile-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .avatar-large {
+    width: 70px;
+    height: 70px;
+    font-size: 28px;
+  }
+
+  .profile-info-card h3 {
+    font-size: 18px;
+  }
+
+  .saved-passengers-card .card-header-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .passenger-item-row {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .passenger-item-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .add-passenger-panel .action-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .add-passenger-panel .action-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =============================================
+   12. TOAST NOTIFICATIONS — Mobile Position
+   ============================================= */
+@media (max-width: 768px) {
+  .notification-container {
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+    max-width: 100%;
+  }
+
+  .notification-toast {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
+
+/* =============================================
+   13. GENERAL CARD & BUTTON TOUCH TARGETS
+   ============================================= */
+@media (max-width: 768px) {
+  .card {
+    padding: 16px 14px;
+    margin-bottom: 16px;
+  }
+
+  .btn-lg {
+    padding: 13px 20px;
+    font-size: 15px;
+  }
+
+  /* Ensure all buttons are touch-friendly min-height */
+  .btn {
+    min-height: 44px;
+  }
+
+  .form-control {
+    padding: 11px 12px;
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+  }
+
+  .input-with-icon input {
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+    padding: 12px 12px 12px 36px;
+  }
+
+  /* Container full padding */
+  .container {
+    padding: 0 14px;
+  }
+
+  #app-view {
+    padding-bottom: 40px;
+  }
+}
+
+/* =============================================
+   14. EXTRA SMALL SCREENS (< 380px)
+   ============================================= */
+@media (max-width: 380px) {
+  .hero-content h1 {
+    font-size: 22px;
+  }
+
+  .mode-tab {
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+
+  .booking-steps .step {
+    font-size: 11px;
+  }
+
+  .ticket-row .time {
+    font-size: 15px;
+  }
+
+  .navbar-brand {
+    font-size: 16px;
+  }
+}

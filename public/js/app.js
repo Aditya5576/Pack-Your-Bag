@@ -35,7 +35,40 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initAppState();
   window.addEventListener("hashchange", router);
   router(); // Run router for initial load
+  initMobileNav(); // Initialize hamburger navigation
 });
+
+// Mobile Hamburger Navigation Toggle
+function initMobileNav() {
+  const hamburger = document.getElementById("nav-hamburger");
+  const mainNav = document.getElementById("main-nav");
+  if (!hamburger || !mainNav) return;
+
+  // Show hamburger only on small screens
+  function checkBreakpoint() {
+    if (window.innerWidth <= 768) {
+      hamburger.style.display = "flex";
+    } else {
+      hamburger.style.display = "none";
+      mainNav.classList.remove("nav-open");
+    }
+  }
+
+  checkBreakpoint();
+  window.addEventListener("resize", checkBreakpoint);
+
+  hamburger.addEventListener("click", () => {
+    mainNav.classList.toggle("nav-open");
+  });
+
+  // Close nav when any nav link is clicked
+  mainNav.querySelectorAll(".nav-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      mainNav.classList.remove("nav-open");
+    });
+  });
+}
+
 
 // Seed user state and synchronize local storage
 async function initAppState() {
