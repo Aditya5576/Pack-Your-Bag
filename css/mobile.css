@@ -951,4 +951,21 @@ html {
     flex-wrap: wrap;
     gap: 6px;
   }
+
+  /* FIX 11: Normalise iOS Safari input[type="date"] width & appearance to prevent overflow */
+  input[type="date"] {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+
+  input[type="date"]::-webkit-date-and-time-value {
+    min-height: 20px;
+    text-align: left;
+    margin: 0;
+  }
 }
