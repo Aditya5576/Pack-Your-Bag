@@ -868,3 +868,87 @@ html {
     font-size: 16px;
   }
 }
+
+/* =============================================
+   v3 PRODUCTION AUDIT FIXES
+   ============================================= */
+
+@media (max-width: 768px) {
+
+  /* FIX 1: Hero text needs side padding so it doesn't touch screen edges */
+  .hero-content {
+    padding: 0 16px;
+  }
+
+  /* FIX 2: Payment modal — no black void, always centered */
+  .payment-modal-overlay {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px 16px !important;
+    background-color: rgba(5, 8, 16, 0.98) !important;
+  }
+
+  .razorpay-modal-box {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    border-radius: var(--radius-md) !important;
+    max-height: 88vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* FIX 3: Nav auth badge (LOCAL DB ONLY / login button) — no overflow */
+  #nav-auth-container {
+    width: 100%;
+    padding: 6px 14px 10px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  #nav-auth-container .badge,
+  #nav-auth-container button,
+  #nav-auth-container a {
+    font-size: 12px;
+    max-width: 100%;
+    word-break: break-word;
+  }
+
+  /* FIX 4: Search Results "Modify Search" — auto width, not full width */
+  .search-header-summary .btn {
+    width: auto !important;
+    min-width: 130px;
+  }
+
+  /* FIX 5: Admin table — wide enough to show all 6 columns */
+  .admin-table {
+    min-width: 720px;
+  }
+
+  /* FIX 6 & 7: .page-title is shared by Admin + My Trips headings */
+  .page-title {
+    font-size: 22px;
+    margin-bottom: 16px;
+    word-break: break-word;
+  }
+
+  /* FIX 8: Prevent ALL pages from horizontal overflow */
+  .search-results-page,
+  .booking-flow-container,
+  .my-trips-page,
+  .admin-page-container,
+  .profile-page-container,
+  #app-view {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* FIX 9: Price-action column wraps cleanly on narrow screens */
+  .col-price-action {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
