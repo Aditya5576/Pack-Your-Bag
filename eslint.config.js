@@ -4,13 +4,7 @@ import prettier from "eslint-config-prettier";
 
 export default [
   {
-    ignores: [
-      "dist/**",
-      "node_modules/**",
-      "coverage/**",
-      "playwright-report/**",
-      ".wrangler/**"
-    ]
+    ignores: ["dist/**", "node_modules/**", "coverage/**", "playwright-report/**", ".wrangler/**", "lighthouse-report/**"]
   },
   {
     files: ["**/*.js", "**/*.html"],
@@ -47,8 +41,8 @@ export default [
       "no-unused-vars": "off", // Disable unused variables for global scope script architecture compatibility
       "no-undef": "error",
       "no-console": "off",
-      "semi": ["error", "always"],
-      "quotes": ["error", "double", { "avoidEscape": true }]
+      semi: ["error", "always"],
+      quotes: ["error", "double", { avoidEscape: true }]
     }
   },
   prettier

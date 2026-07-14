@@ -402,7 +402,6 @@ async function initCheckoutView() {
               <span class="logo">💳</span>
               <div>
                 <h4>Razorpay Checkout</h4>
-                <p class="mode">TEST MODE</p>
               </div>
             </div>
             <div class="amount-header">
@@ -423,19 +422,19 @@ async function initCheckoutView() {
               <div class="payment-method-view" id="view-card">
                 <div class="form-group">
                   <label>Card Number</label>
-                  <input type="text" class="form-control card-mask" placeholder="1111 2222 3333 4444" value="4315 7824 9912 3456" disabled>
+                  <input type="text" id="razorpay-card-number" class="form-control card-mask" placeholder="1111 2222 3333 4444" value="4315 7824 9912 3456" maxlength="23" required>
                 </div>
                 <div class="form-grid">
                   <div class="form-group">
                     <label>Expiry Date</label>
-                    <input type="text" class="form-control" placeholder="MM/YY" value="12/29" disabled>
+                    <input type="text" id="razorpay-card-expiry" class="form-control" placeholder="MM/YY" value="12/29" maxlength="5" required>
                   </div>
                   <div class="form-group">
                     <label>CVV</label>
-                    <input type="password" class="form-control" placeholder="123" value="999" disabled>
+                    <input type="password" id="razorpay-card-cvv" class="form-control" placeholder="123" value="999" maxlength="4" required>
                   </div>
                 </div>
-                <p class="help-text">Press "Pay Now" to process this transaction using test card numbers.</p>
+                <p class="help-text">Enter card details and click "Pay Now" to complete booking.</p>
               </div>
               
               <!-- UPI View -->
@@ -694,6 +693,39 @@ function bindCheckoutEvents(savedPassengers) {
     });
   });
 
+  // Auto-format card fields
+  const cardInp = document.getElementById("razorpay-card-number");
+  const expiryInp = document.getElementById("razorpay-card-expiry");
+  const cvvInp = document.getElementById("razorpay-card-cvv");
+
+  if (cardInp) {
+    cardInp.addEventListener("input", (e) => {
+      let val = e.target.value.replace(/\D/g, "");
+      let formatted = "";
+      for (let i = 0; i < val.length; i += 4) {
+        formatted += val.substring(i, i + 4) + " ";
+      }
+      e.target.value = formatted.trim();
+    });
+  }
+
+  if (expiryInp) {
+    expiryInp.addEventListener("input", (e) => {
+      let val = e.target.value.replace(/\D/g, "");
+      if (val.length >= 2) {
+        e.target.value = val.substring(0, 2) + "/" + val.substring(2, 4);
+      } else {
+        e.target.value = val;
+      }
+    });
+  }
+
+  if (cvvInp) {
+    cvvInp.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\D/g, "");
+    });
+  }
+
   // Cancel Payment
   document.getElementById("btn-cancel-payment").addEventListener("click", () => {
     razorpayOverlay.style.display = "none";
@@ -702,6 +734,30 @@ function bindCheckoutEvents(savedPassengers) {
 
   // Complete Payment Action (simulating processing)
   document.getElementById("btn-submit-payment").addEventListener("click", () => {
+    const activeTab = document.querySelector(".pay-method-tab.active").getAttribute("data-method");
+    if (activeTab === "card") {
+      const cardVal = cardInp.value.replace(/\s+/g, "");
+      const expiryVal = expiryInp.value.trim();
+      const cvvVal = cvvInp.value.trim();
+
+      const cardRegex = /^\d{12,19}$/;
+      const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+      const cvvRegex = /^\d{3,4}$/;
+
+      if (!cardRegex.test(cardVal)) {
+        showNotification("Please enter a valid card number (12-19 digits).", "error");
+        return;
+      }
+      if (!expiryRegex.test(expiryVal)) {
+        showNotification("Please enter a valid expiry date (MM/YY).", "error");
+        return;
+      }
+      if (!cvvRegex.test(cvvVal)) {
+        showNotification("Please enter a valid 3 or 4-digit CVV.", "error");
+        return;
+      }
+    }
+
     const loadingScreen = document.getElementById("payment-loading");
     const loadingStatus = document.getElementById("payment-loading-status");
 
