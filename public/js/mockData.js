@@ -341,7 +341,7 @@ window.dbAPI = {
       try {
         const { error } = await window.supabaseClient
           .from("routes")
-          .update({ seat_layout: seatLayout, seats_available: seatsAvailable })
+          .update({ seatLayout: seatLayout, seatsAvailable: seatsAvailable })
           .eq("id", routeId);
         if (error) throw error;
         return true;
@@ -372,7 +372,7 @@ window.dbAPI = {
 
         const { error: routeErr } = await window.supabaseClient
           .from("routes")
-          .update({ seat_layout: seatLayout, seats_available: seatsAvailable })
+          .update({ seatLayout: seatLayout, seatsAvailable: seatsAvailable })
           .eq("id", routeId);
         if (routeErr) throw routeErr;
         
