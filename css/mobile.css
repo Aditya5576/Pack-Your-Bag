@@ -1,5 +1,6 @@
 /* mobile.css - Complete Mobile Responsive Overrides */
 /* Covers every view: Navbar, Home, Search, Seat Selection, Checkout, Ticket, Profile, Admin, Modals */
+/* v2 - Fixes from screenshot audit: admin metrics, table overflow, payment modal, breadcrumbs, page padding */
 
 /* =============================================
    0. GLOBAL MOBILE BASE
@@ -187,14 +188,21 @@ html {
    ============================================= */
 @media (max-width: 768px) {
   .search-results-page {
-    padding-top: 16px;
+    padding-top: 20px;
   }
 
+  /* FIX: Search header — summary row wraps cleanly */
   .search-header-summary {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
-    padding: 12px 16px;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  /* FIX: Modify search button full-width on mobile */
+  .search-header-summary .btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .summary-details {
@@ -287,15 +295,31 @@ html {
     padding-top: 16px;
   }
 
+  /* FIX: Booking breadcrumb — no wrap, scroll horizontally instead */
   .booking-steps {
-    gap: 6px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 4px;
+    margin-bottom: 16px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: flex-start;
+    padding: 0 4px 6px 4px;
+  }
+
+  .booking-steps::-webkit-scrollbar {
+    display: none;
   }
 
   .booking-steps .step {
-    font-size: 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .booking-steps .step-divider {
+    font-size: 11px;
+    flex-shrink: 0;
   }
 
   .booking-layout {
@@ -341,6 +365,17 @@ html {
   .booking-summary-panel {
     order: -1;
   }
+
+  /* FIX: Seat selection — ensure seat grid doesn't overflow */
+  .seat-grid-outer {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .train-view .seat-grid-outer,
+  .flight-view .seat-grid-outer {
+    max-width: 100%;
+  }
 }
 
 /* =============================================
@@ -385,26 +420,21 @@ html {
    7. PAYMENT MODAL — Razorpay Overlay
    ============================================= */
 @media (max-width: 768px) {
-  .razorpay-modal-box {
-    max-width: calc(100vw - 24px);
-    width: 100%;
-    margin: 0 12px;
-    border-radius: var(--radius-md);
-    /* Push modal toward top on small screens */
-    position: relative;
-    top: unset;
-  }
-
+  /* FIX: Center the modal vertically — no black void */
   .payment-modal-overlay {
-    align-items: flex-end;
-    padding-bottom: 0;
+    align-items: center;
+    padding: 16px;
+    background-color: rgba(5, 8, 16, 0.97);
   }
 
   .razorpay-modal-box {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
     max-width: 100%;
+    width: 100%;
     margin: 0;
+    border-radius: var(--radius-md);
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .razorpay-header {
@@ -617,27 +647,33 @@ html {
     padding-top: 16px;
   }
 
+  /* FIX: Metrics 2-per-row, row direction (icon left, text right) */
   .metrics-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 20px;
   }
 
   .metric-card {
     gap: 10px;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 14px;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 10px;
   }
 
   .metric-card .m-icon {
-    width: 44px;
-    height: 44px;
-    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    flex-shrink: 0;
   }
 
   .metric-card h3 {
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .metric-card p {
+    font-size: 11px;
   }
 
   .admin-tabs-wrapper {
@@ -660,8 +696,16 @@ html {
     gap: 10px;
   }
 
+  /* FIX: Admin table — proper horizontal scroll with min-width */
   .table-responsive {
     -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    width: 100%;
+    border-radius: var(--radius-sm);
+  }
+
+  .admin-table {
+    min-width: 600px;
   }
 
   .admin-table th,
@@ -672,9 +716,24 @@ html {
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 360px) {
+  /* Only go single-column on very tiny screens */
   .metrics-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================
+   10b. MY TRIPS PAGE — Top Padding Fix
+   ============================================= */
+@media (max-width: 768px) {
+  /* FIX: Add proper page top spacing so content clears navbar */
+  .my-trips-page,
+  .profile-page-container,
+  .admin-page-container,
+  .booking-flow-container,
+  .search-results-page {
+    padding-top: 20px;
   }
 }
 
@@ -683,7 +742,7 @@ html {
    ============================================= */
 @media (max-width: 768px) {
   .profile-page-container {
-    padding-top: 16px;
+    padding-top: 20px;
   }
 
   .profile-layout-grid {
