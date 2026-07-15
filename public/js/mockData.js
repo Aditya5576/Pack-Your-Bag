@@ -378,18 +378,124 @@ window.dbAPI = {
   },
 
   // 5. Fetch bookings matching authenticated user session
+  // Helpers to map camelCase properties and hotel records to/from database snake_case columns
+  mapDBRecordToBooking(record) {
+    if (!record) return null;
+    if (record.type === "hotel" || record.bookingType === "hotel") {
+      return {
+        id: record.id,
+        bookingType: "hotel",
+        hotelId: record.tripId || record.hotelId,
+        hotelName: record.origin || record.hotelName,
+        platform: record.provider || record.platform,
+        photo: record.classSelected || record.photo,
+        rating: record.seats && record.seats[0] ? parseFloat(record.seats[0]) : (record.rating || 0),
+        city: record.destination || record.city,
+        checkIn: record.date || record.checkIn,
+        checkOut: record.duration || record.checkOut,
+        roomType: record.departureTime || record.roomType,
+        roomNumber: record.arrivalTime || record.roomNumber,
+        passengers: record.passengers,
+        billing: record.billing,
+        email: record.email,
+        mobile: record.mobile,
+        bookingDate: record.bookingDate,
+        status: record.status
+      };
+    }
+    return {
+      id: record.id,
+      bookingType: record.bookingType || record.type,
+      tripId: record.tripId,
+      type: record.type,
+      provider: record.provider,
+      origin: record.origin,
+      destination: record.destination,
+      date: record.date,
+      departureTime: record.departureTime,
+      arrivalTime: record.arrivalTime,
+      duration: record.duration,
+      classSelected: record.classSelected,
+      seats: record.seats,
+      passengers: record.passengers,
+      billing: record.billing,
+      email: record.email,
+      mobile: record.mobile,
+      bookingDate: record.bookingDate,
+      status: record.status
+    };
+  },
+
+  mapBookingToDBRecord(booking) {
+    if (!booking) return null;
+    if (booking.bookingType === "hotel" || booking.type === "hotel") {
+      return {
+        id: booking.id,
+        tripId: booking.hotelId || "",
+        type: "hotel",
+        provider: booking.platform || "",
+        origin: booking.hotelName || "",
+        destination: booking.city || "",
+        date: booking.checkIn || "",
+        departureTime: booking.roomType || "",
+        arrivalTime: booking.roomNumber || "",
+        duration: booking.checkOut || "",
+        classSelected: booking.photo || "",
+        seats: [String(booking.rating || 0)],
+        passengers: booking.passengers,
+        billing: booking.billing,
+        email: booking.email,
+        mobile: booking.mobile,
+        status: booking.status,
+        user_id: booking.user_id
+      };
+    }
+    return {
+      id: booking.id,
+      tripId: booking.tripId || "",
+      type: booking.bookingType || booking.type || "",
+      provider: booking.provider || "",
+      origin: booking.origin || "",
+      destination: booking.destination || "",
+      date: booking.date || "",
+      departureTime: booking.departureTime || "",
+      arrivalTime: booking.arrivalTime || "",
+      duration: booking.duration || "",
+      classSelected: booking.classSelected || "",
+      seats: booking.seats || [],
+      passengers: booking.passengers,
+      billing: booking.billing,
+      email: booking.email,
+      mobile: booking.mobile,
+      status: booking.status,
+      user_id: booking.user_id
+    };
+  },
+
+  // 5. Fetch bookings matching authenticated user session
   async getBookings() {
+    let localBookings = [];
+    try {
+      localBookings = getDB().bookings || [];
+    } catch (e) {
+      console.warn("Failed to load local bookings:", e);
+    }
+
     if (window.useSupabase) {
       try {
         // RLS automatically filters by auth.uid() = user_id on select
         const { data, error } = await window.supabaseClient.from("bookings").select("*");
         if (error) throw error;
-        return data;
+        
+        const dbBookings = (data || []).map(r => this.mapDBRecordToBooking(r));
+        const dbIds = new Set(dbBookings.map(b => b.id));
+        const merged = [...dbBookings, ...localBookings.filter(b => !dbIds.has(b.id))];
+        return merged;
       } catch (err) {
         console.error("Supabase getBookings failed, falling back to LocalStorage: ", err);
       }
     }
-    return getDB().bookings;
+    return localBookings;
   },
 
   // 6. Fetch a single booking by ID (Ticket display)
@@ -399,7 +505,7 @@ window.dbAPI = {
         const { data, error } = await window.supabaseClient.from("bookings").select("*").eq("id", bookingId);
         if (error) throw error;
         if (data && data.length > 0) {
-          return data[0];
+          return this.mapDBRecordToBooking(data[0]);
         }
       } catch (err) {
         console.error("Supabase getBookingById failed, falling back to LocalStorage: ", err);
@@ -410,6 +516,14 @@ window.dbAPI = {
 
   // 7. Save a new booking (Checkout completion)
   async addBooking(booking) {
+    // 1. Always save to LocalStorage first to ensure local durability
+    const db = getDB();
+    if (!db.bookings.some(b => b.id === booking.id)) {
+      db.bookings.push(booking);
+      saveDB(db);
+    }
+
+    // 2. Try to sync to Supabase if connected
     if (window.useSupabase) {
       try {
         const {
@@ -418,17 +532,15 @@ window.dbAPI = {
         if (session && session.user) {
           booking.user_id = session.user.id;
         }
-        const { error } = await window.supabaseClient.from("bookings").insert([booking]);
+        
+        const dbRecord = this.mapBookingToDBRecord(booking);
+        const { error } = await window.supabaseClient.from("bookings").insert([dbRecord]);
         if (error) throw error;
         return true;
       } catch (err) {
-        console.error("Supabase addBooking failed, falling back to LocalStorage: ", err);
+        console.error("Supabase addBooking failed, fallback active: ", err);
       }
     }
-
-    const db = getDB();
-    db.bookings.push(booking);
-    saveDB(db);
     return true;
   },
 

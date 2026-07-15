@@ -433,6 +433,12 @@ html {
     margin: 0;
     border-radius: var(--radius-md);
     max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .razorpay-body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -874,7 +880,6 @@ html {
    ============================================= */
 
 @media (max-width: 768px) {
-
   /* FIX 1: Hero text needs side padding so it doesn't touch screen edges */
   .hero-content {
     padding: 0 16px;
@@ -894,8 +899,9 @@ html {
     bottom: auto !important;
     border-radius: var(--radius-md) !important;
     max-height: 88vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
     width: 100%;
     max-width: 100%;
     margin: 0;
