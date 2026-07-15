@@ -48,23 +48,31 @@ async function initHotelVoucherView(queryParams) {
       <div class="ticket-invoice-grid">
         <!-- Printable Voucher Card -->
         <main class="card ticket-card" id="printable-hotel-voucher">
-          <div class="ticket-header" style="background: var(--secondary-gradient);">
-            <div class="ticket-brand">
-              <span>🎒</span> Pack Your Bags stays
+          <div class="ticket-header" style="background: linear-gradient(rgba(5, 8, 16, 0.4), rgba(5, 8, 16, 0.75)), url('${booking.photo || ''}'); background-size: cover; background-position: center; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; border-radius: var(--radius-md) var(--radius-md) 0 0; border-bottom: 2px solid var(--accent-teal);">
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+              <div class="ticket-brand" style="font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.6); display: flex; align-items: center; gap: 6px;">
+                <span>🎒</span> Pack Your Bags Stays
+              </div>
+              <span class="ticket-type-badge" style="background: var(--accent-teal); color: var(--bg-primary); font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-shadow: none;">
+                ${booking.platform.toUpperCase()} CONFIRMED
+              </span>
             </div>
-            <span class="ticket-type-badge">${booking.platform.toUpperCase()} PARTNER</span>
+            <div style="color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.6); text-align: left;">
+              <span style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.85; font-weight: 700; color: var(--accent-teal);">OFFICIAL CONFIRMATION VOUCHER</span>
+              <h2 style="font-size: 20px; font-weight: 800; margin: 2px 0 0 0; color: #fff; line-height: 1.2;">${booking.hotelName}</h2>
+            </div>
           </div>
 
           <div class="ticket-body">
             <!-- Hotel Name and City -->
             <div class="ticket-row route-row" style="background-color: rgba(255, 255, 255, 0.02);">
               <div class="col">
-                <span class="lbl">Accommodation Name</span>
-                <span class="val" style="font-size: 18px; font-weight: 700; color: var(--accent-teal);">${booking.hotelName}</span>
+                <span class="lbl">Accommodation Location</span>
+                <span class="val" style="font-size: 16px; font-weight: 700; color: var(--text-primary);">📍 ${booking.city} City Centre</span>
               </div>
               <div class="col" style="text-align: right;">
-                <span class="lbl">City Destination</span>
-                <span class="val">📍 ${booking.city}</span>
+                <span class="lbl">Booking Reference</span>
+                <span class="val" style="font-family: monospace; font-size: 15px; color: var(--accent-teal); font-weight: 700;">${bookingId}</span>
               </div>
             </div>
 
@@ -91,8 +99,10 @@ async function initHotelVoucherView(queryParams) {
             <!-- Room & Guest details -->
             <div class="ticket-row">
               <div class="col">
-                <span class="lbl">Reserved Room Type</span>
-                <span class="val" style="color: var(--text-primary); font-size: 16px;">${booking.roomType}</span>
+                <span class="lbl">Reserved Room Details</span>
+                <span class="val" style="color: var(--text-primary); font-size: 16px; font-weight: 700;">
+                  ${booking.roomType} &mdash; <span style="color: var(--accent-teal);">Room ${booking.roomNumber || 'TBD'}</span>
+                </span>
                 <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px;">
                   ${specs.map(spec => `<span style="font-size: 10px; padding: 2px 8px; border-radius: 4px; background: rgba(0, 242, 254, 0.06); border: 1px solid rgba(0, 242, 254, 0.15); color: var(--accent-teal); font-weight: 500;">${spec}</span>`).join('')}
                 </div>
@@ -117,6 +127,36 @@ async function initHotelVoucherView(queryParams) {
                   `
                     )
                     .join("")}
+                </div>
+              </div>
+            </div>
+
+            <!-- Embedded Printed Invoice details -->
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255,255,255,0.08); border-radius: 6px; padding: 12px; margin-bottom: 15px;">
+              <span class="lbl" style="margin-bottom: 6px; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 10px; color: var(--text-muted);">🧾 Tax Invoice & Payment Receipt</span>
+              <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+                  <span>Room Stay Charges (${numNights} nights)</span>
+                  <span style="font-weight: 600;">₹${booking.billing.baseFare}</span>
+                </div>
+                ${
+                  booking.billing.discount > 0
+                    ? `
+                  <div style="display: flex; justify-content: space-between; color: #10b981;">
+                    <span>🎁 Promo Code Discount</span>
+                    <span style="font-weight: 700;">-₹${booking.billing.discount}</span>
+                  </div>
+                `
+                    : ""
+                }
+                <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+                  <span>Tax (SGST & CGST 18%)</span>
+                  <span style="font-weight: 600;">₹${booking.billing.gst}</span>
+                </div>
+                <div style="height: 1px; background: rgba(255, 255, 255, 0.05); margin: 4px 0;"></div>
+                <div style="display: flex; justify-content: space-between; font-weight: 700; color: var(--text-primary);">
+                  <span>Total Amount Paid</span>
+                  <span style="color: var(--accent-teal); font-size: 14px; font-weight: 800;">₹${booking.billing.grandTotal}</span>
                 </div>
               </div>
             </div>

@@ -248,6 +248,10 @@ async function openRoomModal(hotelId, numNights) {
   ];
 
   roomsBody.innerHTML = `
+    <!-- Large Hotel review photo banner -->
+    <div style="width: 100%; height: 180px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 16px; border: 1px solid var(--glass-border);">
+      <img src="${hotel.photo}" style="width: 100%; height: 100%; object-fit: cover;" alt="${hotel.name}">
+    </div>
     <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
       ${hotel.description}
     </div>
@@ -321,6 +325,13 @@ async function initHotelBookingView(queryParams) {
   const numNights = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
   const numGuests = searchState.passengers;
 
+  const roomNumbersMap = {
+    "Standard Room": ["101", "102", "104", "107", "110"],
+    "Deluxe King Room": ["201", "203", "205", "208"],
+    "Executive Garden Suite": ["301", "302", "305"]
+  };
+  const availableRooms = roomNumbersMap[roomType] || ["101", "102"];
+
   // Initialize booking details inside state
   window.appState.hotelBookingDetails = {
     hotel,
@@ -330,7 +341,8 @@ async function initHotelBookingView(queryParams) {
     numGuests,
     checkIn: searchState.date,
     checkOut: searchState.checkoutDate,
-    passengers: []
+    passengers: [],
+    roomNumber: availableRooms[0]
   };
 
   const specsMap = {
@@ -396,6 +408,20 @@ async function initHotelBookingView(queryParams) {
                   </div>
                 </div>
               `).join("")}
+            </div>
+
+            <!-- Dynamic Room Number Selector -->
+            <div class="card">
+              <h3>Select Room Number</h3>
+              <div class="dashed-hr"></div>
+              <p class="help-text" style="margin-bottom: 12px;">Choose your preferred room number from the available options:</p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="room-number-selector-grid">
+                ${availableRooms.map((num, i) => `
+                  <button type="button" class="btn btn-outline btn-sm room-num-pill ${i === 0 ? 'active' : ''}" data-room="${num}" style="padding: 10px 18px; border-radius: 6px; font-weight: 700; ${i === 0 ? 'background: var(--accent-teal); color: var(--bg-primary); border-color: var(--accent-teal);' : ''}">
+                    🚪 Room ${num}
+                  </button>
+                `).join("")}
+              </div>
             </div>
 
             <!-- Contact & Ticket Delivery details -->
@@ -649,6 +675,26 @@ function initHotelBookingLogic(numNights, rate, numGuests) {
     calculateHotelFareBreakdown();
   });
 
+  // Room Number Selector Event Handlers
+  document.querySelectorAll(".room-num-pill").forEach((pill) => {
+    pill.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.querySelectorAll(".room-num-pill").forEach((p) => {
+        p.classList.remove("active");
+        p.style.background = "";
+        p.style.color = "";
+        p.style.borderColor = "";
+      });
+      e.currentTarget.classList.add("active");
+      e.currentTarget.style.background = "var(--accent-teal)";
+      e.currentTarget.style.color = "var(--bg-primary)";
+      e.currentTarget.style.borderColor = "var(--accent-teal)";
+
+      state.roomNumber = e.currentTarget.getAttribute("data-room");
+      showNotification(`Room ${state.roomNumber} selected!`, "success");
+    });
+  });
+
   // Calculate default fare
   calculateHotelFareBreakdown();
 
@@ -853,6 +899,7 @@ async function processSuccessfulHotelBooking() {
     checkIn: hotelDetails.checkIn,
     checkOut: hotelDetails.checkOut,
     roomType: hotelDetails.roomType,
+    roomNumber: hotelDetails.roomNumber,
     passengers: [...hotelDetails.passengers],
     billing: { ...hotelDetails.billing },
     email: hotelDetails.email,
