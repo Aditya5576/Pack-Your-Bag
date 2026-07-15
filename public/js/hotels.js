@@ -42,8 +42,8 @@ async function initHotelsView() {
 
           <!-- Max price filter -->
           <div class="form-group">
-            <label id="lbl-price-filter">Max Price per night: ₹8000</label>
-            <input type="range" id="filter-price-slider" class="range-slider" min="1000" max="8000" step="250" value="8000">
+            <label id="lbl-price-filter">Max Price per night: ₹40000</label>
+            <input type="range" id="filter-price-slider" class="range-slider" min="1000" max="40000" step="500" value="40000">
           </div>
           <div class="dashed-hr"></div>
 

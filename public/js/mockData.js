@@ -398,7 +398,9 @@ window.dbAPI = {
       try {
         const { data, error } = await window.supabaseClient.from("bookings").select("*").eq("id", bookingId);
         if (error) throw error;
-        return data[0] || null;
+        if (data && data.length > 0) {
+          return data[0];
+        }
       } catch (err) {
         console.error("Supabase getBookingById failed, falling back to LocalStorage: ", err);
       }
@@ -656,51 +658,406 @@ window.dbAPI = {
   }
 };
 
-const HOTEL_NAMES = {
-  luxury: ["The Royal Palace", "Grand Heritage Ritz", "The Sapphire Suites", "Imperia President"],
-  resort: ["Golden Sands Resort", "Whispering Palms Beach Stay", "Azure Oceanfront Resort", "Maris Bay Retreat"],
-  boutique: ["Boutique Hideaway Villa", "The Urban Loft Hotel", "Emerald Eco Stay", "Heritage Manor Boutique"]
+const REAL_HOTELS = {
+  "Mumbai": [
+    {
+      name: "The Taj Mahal Palace",
+      platform: "booking",
+      rating: 4.9,
+      price: 18500,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Sea View Rooms", "Butler Service", "Luxury Spa", "Infinity Pool", "9 Award-winning Restaurants", "Free WiFi"],
+      description: "India's iconic heritage hotel, standing majestically opposite the Gateway of India, offering unparalleled luxury, vintage architecture, and refined hospitality."
+    },
+    {
+      name: "Trident Nariman Point",
+      platform: "google",
+      rating: 4.7,
+      price: 11000,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Oceanfront View", "24h Room Service", "Outdoor Pool", "Fitness Centre", "Free WiFi", "Bar"],
+      description: "Located on Marine Drive, Trident Nariman Point offers stunning panoramic views of the Arabian Sea, modern guest rooms, and award-winning dining."
+    },
+    {
+      name: "JW Marriott Mumbai Juhu",
+      platform: "airbnb",
+      rating: 4.8,
+      price: 14500,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Beachfront Access", "Saltwater Pools", "Quan Spa", "Award-winning Dining", "AC", "Smart TV"],
+      description: "A premium luxury resort nestled along Juhu Beach, popular with Bollywood stars, offering a beautiful beachside sanctuary, luxury amenities, and fine dining."
+    },
+    {
+      name: "Ginger Mumbai Andheri",
+      platform: "vrbo",
+      rating: 4.2,
+      price: 4500,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Lean Luxe Concept", "Free WiFi", "Fitness Room", "In-house Restaurant", "AC", "Laundry"],
+      description: "A smart, budget-friendly design hotel featuring modular interiors, high-speed WiFi, and contemporary comforts close to Mumbai Airport."
+    }
+  ],
+  "Delhi": [
+    {
+      name: "The Leela Palace New Delhi",
+      platform: "booking",
+      rating: 4.9,
+      price: 16500,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Rooftop Temperature Pool", "Luxury Spa", "Award-winning Dining", "Butler Service", "Free WiFi", "AC"],
+      description: "Located in Diplomatic Enclave, Chanakyapuri, combining grand Lutyens' architecture with royal Indian heritage, top-tier dining, and unmatched luxury rooms."
+    },
+    {
+      name: "Taj Palace New Delhi",
+      platform: "google",
+      rating: 4.8,
+      price: 13500,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["6 Acres of Gardens", "Golf Putting Green", "Luxury Spa", "Swimming Pool", "High-speed WiFi"],
+      description: "Set in Delhi’s prestigious Diplomatic Enclave, Taj Palace has hosted world leaders for decades. Features refined heritage comfort, lush lawns, and premium spa retreats."
+    },
+    {
+      name: "The Lalit New Delhi",
+      platform: "airbnb",
+      rating: 4.5,
+      price: 8500,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Connaught Place Location", "Nightclub Kitty Su", "Rejuve Spa", "Free WiFi", "Swimming Pool"],
+      description: "A luxury skyscraper hotel situated in the heart of Connaught Place, offering modern rooms, multiple dining venues, and a lively downtown nightlife."
+    },
+    {
+      name: "Bloomrooms @ Janpath",
+      platform: "vrbo",
+      rating: 4.3,
+      price: 3900,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Signature Yellow Design", "Free WiFi", "Cloudbeds Comfort", "Cafe", "AC", "Smart TV"],
+      description: "A highly rated, vibrant, and minimal design hotel situated near Janpath Market, featuring clean interiors and smart spaces."
+    }
+  ],
+  "Bangalore": [
+    {
+      name: "The Oberoi Bengaluru",
+      platform: "booking",
+      rating: 4.9,
+      price: 14000,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Garden View Rooms", "Century-old Rain Tree View", "Luxury Spa", "Outdoor Pool", "Free WiFi"],
+      description: "A luxury oasis on MG Road, built around a majestic 120-year-old rain tree, offering private balconies with garden views and award-winning personalized service."
+    },
+    {
+      name: "ITC Gardenia",
+      platform: "google",
+      rating: 4.8,
+      price: 12500,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["LEED Platinum Certified", "Outdoor Heli-Pad View", "Kaya Kalp Spa", "Pillared Corridors", "Free WiFi"],
+      description: "Inspired by the garden city theme, ITC Gardenia offers sustainable luxury architecture, premium regional dining venues, and spacious sky suites."
+    },
+    {
+      name: "The Taj West End",
+      platform: "airbnb",
+      rating: 4.8,
+      price: 15500,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["20 Acres of Heritage Gardens", "Historic Postbox", "Tennis Courts", "Outdoor Pool", "Spa"],
+      description: "Dating back to 1887, Taj West End is a heritage sanctuary with lush green gardens, historic Victorian architecture, and world-class fine dining."
+    },
+    {
+      name: "Ibiza Guest House Indiranagar",
+      platform: "vrbo",
+      rating: 4.0,
+      price: 2900,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Boutique Balcony Rooms", "Free WiFi", "Kitchenette", "AC", "Laundry Services"],
+      description: "A trendy boutique guest house in Indiranagar, close to major pubs and restaurants, catering to remote workers and creative professionals."
+    }
+  ],
+  "Pune": [
+    {
+      name: "JW Marriott Hotel Pune",
+      platform: "booking",
+      rating: 4.8,
+      price: 11500,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Senapati Bapat Rd Location", "Rooftop Lounge", "Infinity Pool", "Quan Spa", "Free WiFi"],
+      description: "An iconic landmark hotel on Senapati Bapat Road, offering luxury guest rooms, extensive banquet halls, and a vibrant rooftop restaurant."
+    },
+    {
+      name: "The Ritz-Carlton Pune",
+      platform: "google",
+      rating: 4.9,
+      price: 14500,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Golf Course View", "Ritz-Carlton Club Access", "Luxury Spa", "Whiskey Lounge", "Free WiFi"],
+      description: "Overlooking the beautiful Poona Club Golf Course, this hotel offers bespoke luxury, classic design details, and elite club concierge services."
+    },
+    {
+      name: "Conrad Pune",
+      platform: "airbnb",
+      rating: 4.8,
+      price: 10000,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Art Deco Design", "Heated Outdoor Pool", "Concierge Service", "Free WiFi", "6 Dining Venues"],
+      description: "Pune's luxury business address featuring grand Art Deco styling, advanced smart-room controls, and a gorgeous pool deck."
+    },
+    {
+      name: "FabHotel Baner Prime",
+      platform: "vrbo",
+      rating: 4.1,
+      price: 2500,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Free WiFi", "AC Rooms", "Complimentary Breakfast", "Daily Housekeeping", "Smart TV"],
+      description: "A comfortable, budget-friendly business hotel offering clean rooms, quick service, and easy access to Baner IT Hub."
+    }
+  ],
+  "Chennai": [
+    {
+      name: "ITC Grand Chola",
+      platform: "booking",
+      rating: 4.9,
+      price: 13500,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Chola Dynasty Architecture", "3 Swimming Pools", "Peshawri Restaurant", "Kaya Kalp Spa", "Free WiFi"],
+      description: "A massive luxury palace hotel showcasing majestic Chola dynasty architecture, hand-carved pillars, elite suites, and extensive dining options."
+    },
+    {
+      name: "The Leela Palace Chennai",
+      platform: "google",
+      rating: 4.8,
+      price: 12500,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Bay of Bengal Sea View", "Infinity Pool", "ESPACIO Spa", "Free WiFi", "AC", "Mini Bar"],
+      description: "Chennai's only sea-facing palace hotel, situated on the Marina Beach seafront, combining grand design features with breathtaking ocean views."
+    },
+    {
+      name: "Taj Coromandel",
+      platform: "airbnb",
+      rating: 4.8,
+      price: 11000,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Central Location", "Fine Dining Southern Spice", "Luxury Pool", "Jiva Spa", "Free WiFi"],
+      description: "A legendary city icon hosting celebrities and royalty, known for its outstanding South Indian fine dining restaurant Southern Spice."
+    },
+    {
+      name: "Treebo Trend Palm Tree",
+      platform: "vrbo",
+      rating: 4.0,
+      price: 2400,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Free WiFi", "AC", "Complimentary Breakfast", "Free Parking", "Room Service"],
+      description: "A clean and pocket-friendly boutique lodging located in Mylapore, offering easy access to temples and heritage markets."
+    }
+  ],
+  "Kolkata": [
+    {
+      name: "The Oberoi Grand Kolkata",
+      platform: "booking",
+      rating: 4.9,
+      price: 13000,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Colonial Architecture", "Quadrangle Pool", "Bespoke Spa", "Chowringhee Location", "Free WiFi"],
+      description: "Known affectionately as the 'Grand Dame of Chowringhee', this heritage luxury hotel features grand colonial style, luxury rooms, and elegant gardens."
+    },
+    {
+      name: "Taj Bengal",
+      platform: "google",
+      rating: 4.7,
+      price: 10500,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Alipore Elite Enclave", "Lush Atrium lobby", "Swimming Pool", "Jiva Spa", "Free WiFi"],
+      description: "Located in elite Alipore, Taj Bengal offers a calm retreat featuring classic Bengali artwork, a soaring green atrium, and premium suites."
+    },
+    {
+      name: "ITC Sonar Kolkata",
+      platform: "airbnb",
+      rating: 4.8,
+      price: 11500,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Bagh-E-Sonar Lawns", "Water Lilies Pond", "Kaya Kalp Spa", "Free WiFi", "AC"],
+      description: "Designed as a resort-inspired sanctuary with lily ponds and lush green lawns, combining eco-luxury vibes with stellar regional food options."
+    },
+    {
+      name: "The Peerless Inn Kolkata",
+      platform: "vrbo",
+      rating: 4.2,
+      price: 4300,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Authentic Bengali Aaheli", "Esplanade Location", "Free WiFi", "AC", "Fitness Centre"],
+      description: "Located near Esplanade Metro, famous for its iconic traditional Bengali restaurant Aaheli, offering comfortable rooms at moderate rates."
+    }
+  ],
+  "Hyderabad": [
+    {
+      name: "Taj Falaknuma Palace",
+      platform: "booking",
+      rating: 4.9,
+      price: 36000,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Horse-Drawn Carriage Entry", "101-seat Dining Table", "Nizam Palace Tour", "Royal Jiva Spa", "Free WiFi"],
+      description: "A spectacular palace hotel floating 2,000 feet above Hyderabad. Experience the actual royal lifestyle of the Nizams with horse-drawn carriage entries."
+    },
+    {
+      name: "The Westin Hyderabad Mindspace",
+      platform: "google",
+      rating: 4.7,
+      price: 9500,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Hitech City Location", "Heavenly Bed Concept", "Westin Workout Gym", "Outdoor Pool", "Spa"],
+      description: "Located in the heart of Hitech City, this hotel offers spacious modern rooms, signature wellness amenities, and extensive executive business lounges."
+    },
+    {
+      name: "Novotel Hyderabad Airport",
+      platform: "airbnb",
+      rating: 4.5,
+      price: 7500,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Resort Green Architecture", "Spa & Sauna", "Airport Shuttle", "Outdoor Sports Pitch", "Free WiFi"],
+      description: "A peaceful resort-style transit hotel located near Hyderabad International Airport, surrounded by scenic lawns and sports pitches."
+    },
+    {
+      name: "Red Fox Hotel Hitech City",
+      platform: "vrbo",
+      rating: 4.0,
+      price: 3400,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Vibrant Smart Interiors", "Free WiFi", "AC", "Cafe & Bar", "Fitness Corner"],
+      description: "A budget design hotel catering to business executives, featuring crisp bold decor, reliable WiFi, and comfortable beds."
+    }
+  ],
+  "Ahmedabad": [
+    {
+      name: "Taj Skyline Ahmedabad",
+      platform: "booking",
+      rating: 4.7,
+      price: 8500,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Sindhu Bhavan Rd Location", "Indoor Temperature Pool", "Jiva Spa", "Free WiFi", "AC"],
+      description: "A contemporary luxury skyscraper on Sindhu Bhavan Road, featuring premium regional Gujarati cuisine, modern rooms, and dynamic city skyline views."
+    },
+    {
+      name: "The House of MG",
+      platform: "google",
+      rating: 4.8,
+      price: 8900,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Heritage Haveli Stay", "Agashiye Rooftop Dining", "Indoor Pool", "Heritage Walks", "Free WiFi"],
+      description: "A beautifully restored 20th-century heritage mansion haveli offering traditional Gujarati hospitality, luxury rooms, and its famous rooftop dining, Agashiye."
+    },
+    {
+      name: "Hyatt Regency Ahmedabad",
+      platform: "airbnb",
+      rating: 4.6,
+      price: 7200,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Sabarmati Riverfront View", "24h Room Service", "Arogya Spa", "Free WiFi", "Luxury Lounges"],
+      description: "Overlooking the Sabarmati Riverfront, this business hotel offers luxury guest rooms, fine-dining restaurants, and reliable business amenities."
+    },
+    {
+      name: "Lemon Tree Hotel Ahmedabad",
+      platform: "vrbo",
+      rating: 4.1,
+      price: 3900,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Citrus Cafe", "Free WiFi", "AC", "Fitness Corner", "Room Service"],
+      description: "Located near CG Road, this cheerful hotel features bright color palettes, standard amenities, and signature warm hospitality."
+    }
+  ],
+  "Goa": [
+    {
+      name: "Taj Exotica Resort & Spa Goa",
+      platform: "booking",
+      rating: 4.9,
+      price: 21500,
+      photo: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Benaulim Beach Access", "Mediterranean Villas", "9-hole Golf Greens", "Jiva Spa", "Free WiFi"],
+      description: "A gorgeous Mediterranean-style resort sprawled across 56 acres of manicured lawns in South Goa, leading to pristine Benaulim Beach."
+    },
+    {
+      name: "W Goa",
+      platform: "google",
+      rating: 4.7,
+      price: 18500,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Vagator Cliff View", "WooBar Sunsets", "AWAY Spa", "Infinity Beach Pool", "Free WiFi"],
+      description: "Nestled under the historic Chapora Fort cliff overlooking Vagator Beach, W Goa features vibrant party vibes, signature beach pools, and scenic sundowners."
+    },
+    {
+      name: "Cidade de Goa - IHCL",
+      platform: "airbnb",
+      rating: 4.5,
+      price: 10500,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Vainguinim Beachfront", "Portuguese Village Vibe", "Water Sports", "Outdoor Pool", "Spa"],
+      description: "Designed as a rustic Portuguese Goan village on the beachfront, offering watersports, sunset cruises, and cozy sea-facing balconies."
+    },
+    {
+      name: "The Zuri White Sands",
+      platform: "vrbo",
+      rating: 4.6,
+      price: 12500,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Varca Beach Access", "Giant Lagoon Pool", "In-house Casino Dunes", "Maya Spa", "Free WiFi"],
+      description: "A premium South Goa getaway featuring one of India’s longest lagoon pools, an in-house casino lounge, and access to Varca Beach."
+    }
+  ],
+  "Jaipur": [
+    {
+      name: "Rambagh Palace",
+      platform: "booking",
+      rating: 4.9,
+      price: 36000,
+      photo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Former Royal Palace Stay", "Peacock Garden Walks", "Suvarna Mahal Fine Dining", "Jiva Grand Spa", "Free WiFi"],
+      description: "The 'Jewel of Jaipur', a grand former residence of the Maharaja. Wander among strutting peacocks, heritage corridors, and experience dining in gold-plated salons."
+    },
+    {
+      name: "The Oberoi Rajvilas",
+      platform: "google",
+      rating: 4.9,
+      price: 31000,
+      photo: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+      amenities: ["32-acre Oasis", "Luxury Tents & Villas", "Shiva Temple on site", "Oberoi Spa", "Free WiFi"],
+      description: "A luxury fortress resort spread across 32 acres of gardens, featuring royal tents, luxury private villas with pools, and a 280-year-old Shiva temple."
+    },
+    {
+      name: "Taj Amer Jaipur",
+      platform: "airbnb",
+      rating: 4.8,
+      price: 15500,
+      photo: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Aravali Hill Views", "Amer Fort proximity", "Luxury Pool", "Mughal Garden lawns", "Free WiFi"],
+      description: "Set against the backdrop of the Aravali Hills near Amer Fort, offering royal Rajput hospitality, traditional music shows, and luxury comfort."
+    },
+    {
+      name: "Umaid Bhawan Hotel Jaipur",
+      platform: "vrbo",
+      rating: 4.4,
+      price: 4500,
+      photo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+      amenities: ["Traditional Haveli Balconies", "Rooftop Puppet Shows", "Swimming Pool", "Free WiFi", "AC"],
+      description: "A highly rated heritage style boutique hotel, featuring hand-painted ceilings, classic Rajasthani balconies, and daily rooftop puppet performances."
+    }
+  ]
 };
 
 function generateLocalHotels() {
   const hotels = [];
-  const platforms = ["booking", "airbnb", "vrbo", "google"];
-  const photos = [
-    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
-    "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
-    "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
-    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=600&q=80",
-    "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80"
-  ];
-  const allAmenities = [
-    ["Free WiFi", "Swimming Pool", "Spa", "Fitness Center", "Complimentary Breakfast", "Restaurant", "Bar"],
-    ["Free WiFi", "Beach Access", "Infinity Pool", "Complimentary Breakfast", "Kitchen", "Laundry"],
-    ["Free WiFi", "Kitchen", "Balcony", "Free Parking", "AC", "Smart TV"],
-    ["Free WiFi", "Spa", "Complimentary Breakfast", "Room Service", "Bar", "AC"]
-  ];
-
   CITIES.forEach((city) => {
-    for (let idx = 0; idx < 4; idx++) {
-      const type = idx === 0 ? "luxury" : idx === 1 ? "resort" : "boutique";
-      const nameTemplate = HOTEL_NAMES[type][Math.floor(Math.random() * HOTEL_NAMES[type].length)];
-      const name = `${city} ${nameTemplate}`;
-      const platform = platforms[idx % platforms.length];
-      const rating = parseFloat((4.0 + Math.random() * 0.9).toFixed(1));
-      const price = Math.floor(1800 + Math.random() * 5000);
-      const photo = photos[idx % photos.length];
-      const amenities = allAmenities[idx % allAmenities.length];
-      const desc = `Located in a prime area of ${city}, this outstanding property offers premium comforts, exceptional hospitality, and standard amenities customized for a relaxing stay.`;
-
-      hotels.push({
-        id: `HTL-${city.slice(0,3).toUpperCase()}-${100000 + Math.floor(Math.random() * 900000)}`,
-        name,
-        platform,
-        city,
-        rating,
-        price,
-        photo,
-        amenities,
-        description: desc
+    const list = REAL_HOTELS[city];
+    if (list) {
+      list.forEach((item, idx) => {
+        hotels.push({
+          id: `HTL-${city.slice(0, 3).toUpperCase()}-${100000 + idx}`,
+          name: item.name,
+          platform: item.platform,
+          city: city,
+          rating: item.rating,
+          price: item.price,
+          photo: item.photo,
+          amenities: item.amenities,
+          description: item.description
+        });
       });
     }
   });
@@ -724,10 +1081,9 @@ function generateLocalHotels() {
     changed = true;
   }
 
-  if (db.hotels.length === 0) {
-    db.hotels = generateLocalHotels();
-    changed = true;
-  }
+  // Always synchronize with high-fidelity real-world hotel list
+  db.hotels = generateLocalHotels();
+  changed = true;
 
   if (changed) {
     saveDB(db);
