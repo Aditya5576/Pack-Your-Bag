@@ -201,22 +201,32 @@ async function initAdminView() {
                           .slice()
                           .reverse()
                           .map(
-                            (b) => `
-                    <tr>
-                      <td><strong>${b.id}</strong></td>
-                      <td>${b.type.toUpperCase()}</td>
-                      <td>
-                        <div>${b.passengers[0]?.name || "N/A"}</div>
-                        <small class="text-muted">${b.email} | ${b.mobile}</small>
-                      </td>
-                      <td>${b.origin} ➔ ${b.destination} <br> <small>${b.date} (${b.departureTime})</small></td>
-                      <td>${b.seats.join(", ")}</td>
-                      <td>₹${b.billing.grandTotal}</td>
-                      <td>
-                        <span class="status-badge ${b.status.toLowerCase()}">${b.status}</span>
-                      </td>
-                    </tr>
-                  `
+                            (b) => {
+                              const isHotel = b.bookingType === "hotel";
+                              const modeText = isHotel ? "HOTEL" : (b.type || "transport").toUpperCase();
+                              const routeText = isHotel 
+                                ? `${b.hotelName} (${b.city})<br><small>In: ${b.checkIn} | Out: ${b.checkOut}</small>`
+                                : `${b.origin} ➔ ${b.destination}<br><small>${b.date} (${b.departureTime || b.departure_time})</small>`;
+                              const seatsText = isHotel
+                                ? `${b.roomType} (${b.passengers.length} guests)`
+                                : (b.seats || []).join(", ");
+                              return `
+                                <tr>
+                                  <td><strong>${b.id}</strong></td>
+                                  <td>${modeText}</td>
+                                  <td>
+                                    <div>${b.passengers[0]?.name || "N/A"}</div>
+                                    <small class="text-muted">${b.email} | ${b.mobile}</small>
+                                  </td>
+                                  <td>${routeText}</td>
+                                  <td>${seatsText}</td>
+                                  <td>₹${b.billing.grandTotal}</td>
+                                  <td>
+                                    <span class="status-badge ${b.status.toLowerCase()}">${b.status}</span>
+                                  </td>
+                                </tr>
+                              `;
+                            }
                           )
                           .join("")
                   }

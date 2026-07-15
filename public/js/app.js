@@ -27,7 +27,10 @@ const routes = {
   "#/ticket": renderTicketView,
   "#/my-trips": renderMyTripsView,
   "#/profile": renderProfileView,
-  "#/admin": renderAdminView
+  "#/admin": renderAdminView,
+  "#/hotels": initHotelsView,
+  "#/hotel-booking": initHotelBookingView,
+  "#/hotel-voucher": initHotelVoucherView
 };
 
 // Initialize Application on DOM Content Loaded
@@ -68,7 +71,6 @@ function initMobileNav() {
     });
   });
 }
-
 
 // Seed user state and synchronize local storage
 async function initAppState() {

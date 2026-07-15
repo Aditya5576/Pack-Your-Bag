@@ -57,6 +57,8 @@ describe("BookMyTrip Core Business Logic & State", () => {
     loadScript("js/mockData.js");
     loadScript("js/search.js");
     loadScript("js/booking.js");
+    loadScript("js/hotels.js");
+    loadScript("js/hotelTicket.js");
     loadScript("js/app.js");
   });
 

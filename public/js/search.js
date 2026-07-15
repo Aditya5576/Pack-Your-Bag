@@ -12,6 +12,13 @@ function initHomeView() {
     searchState.date = tomorrow.toISOString().split("T")[0];
   }
 
+  if (!searchState.checkoutDate) {
+    const checkin = new Date(searchState.date);
+    const checkout = new Date(checkin);
+    checkout.setDate(checkin.getDate() + 2); // Default 2 nights stay
+    searchState.checkoutDate = checkout.toISOString().split("T")[0];
+  }
+
   appView.innerHTML = `
     <!-- Hero Header Banner -->
     <section class="hero-banner">
@@ -36,12 +43,15 @@ function initHomeView() {
           <button class="mode-tab ${searchState.type === "flight" ? "active" : ""}" data-mode="flight">
             <span class="icon">✈️</span> Flight
           </button>
+          <button class="mode-tab ${searchState.type === "stays" ? "active" : ""}" data-mode="stays">
+            <span class="icon">🏨</span> Stays
+          </button>
         </div>
 
         <!-- Search Input Controls -->
-        <div class="search-form-grid">
+        <div class="search-form-grid" id="search-form-grid">
           <!-- From Field -->
-          <div class="input-group-wrapper">
+          <div class="input-group-wrapper" id="from-wrapper">
             <label for="search-from">From</label>
             <div class="input-with-icon">
               <span class="input-icon">📍</span>
@@ -54,8 +64,8 @@ function initHomeView() {
           <button id="btn-swap-cities" class="btn-swap" title="Swap Cities">↔</button>
 
           <!-- To Field -->
-          <div class="input-group-wrapper">
-            <label for="search-to">To</label>
+          <div class="input-group-wrapper" id="to-wrapper">
+            <label for="search-to" id="lbl-search-to">To</label>
             <div class="input-with-icon">
               <span class="input-icon">🏁</span>
               <input type="text" id="search-to" placeholder="Destination City" value="${searchState.to}" autocomplete="off">
@@ -64,17 +74,26 @@ function initHomeView() {
           </div>
 
           <!-- Date Field -->
-          <div class="input-group-wrapper">
-            <label for="search-date">Departure Date</label>
+          <div class="input-group-wrapper" id="date-wrapper">
+            <label for="search-date" id="lbl-search-date">Departure Date</label>
             <div class="input-with-icon">
               <span class="input-icon">📅</span>
               <input type="date" id="search-date" value="${searchState.date}">
             </div>
           </div>
 
+          <!-- Check-out Date Field -->
+          <div class="input-group-wrapper" id="checkout-date-wrapper" style="display: none;">
+            <label for="search-checkout-date">Check-out Date</label>
+            <div class="input-with-icon">
+              <span class="input-icon">📅</span>
+              <input type="date" id="search-checkout-date" value="${searchState.checkoutDate || ""}">
+            </div>
+          </div>
+
           <!-- Passengers Count -->
-          <div class="input-group-wrapper">
-            <label for="search-passengers">Passengers</label>
+          <div class="input-group-wrapper" id="passengers-wrapper">
+            <label for="search-passengers" id="lbl-search-passengers">Passengers</label>
             <div class="input-with-icon">
               <span class="input-icon">👥</span>
               <input type="number" id="search-passengers" min="1" max="10" value="${searchState.passengers}">
@@ -119,6 +138,7 @@ function bindHomeEvents() {
   const fromInput = document.getElementById("search-from");
   const toInput = document.getElementById("search-to");
   const dateInput = document.getElementById("search-date");
+  const checkoutDateInput = document.getElementById("search-checkout-date");
   const paxInput = document.getElementById("search-passengers");
   const swapBtn = document.getElementById("btn-swap-cities");
   const searchBtn = document.getElementById("btn-main-search");
@@ -127,15 +147,64 @@ function bindHomeEvents() {
   const todayStr = new Date().toISOString().split("T")[0];
   dateInput.setAttribute("min", todayStr);
 
+  if (checkoutDateInput) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    checkoutDateInput.setAttribute("min", tomorrow.toISOString().split("T")[0]);
+    checkoutDateInput.addEventListener("change", (e) => {
+      window.appState.currentSearch.checkoutDate = e.target.value;
+    });
+  }
+
+  function adjustSearchFormLayout(type) {
+    const fromWrapper = document.getElementById("from-wrapper");
+    const swapBtnEl = document.getElementById("btn-swap-cities");
+    const checkoutWrapper = document.getElementById("checkout-date-wrapper");
+    const grid = document.getElementById("search-form-grid");
+    const lblTo = document.getElementById("lbl-search-to");
+    const lblDate = document.getElementById("lbl-search-date");
+    const lblPassengers = document.getElementById("lbl-search-passengers");
+    const searchBtnEl = document.getElementById("btn-main-search");
+
+    if (type === "stays") {
+      if (fromWrapper) fromWrapper.style.display = "none";
+      if (swapBtnEl) swapBtnEl.style.display = "none";
+      if (checkoutWrapper) checkoutWrapper.style.display = "block";
+      if (lblTo) lblTo.textContent = "Destination";
+      if (lblDate) lblDate.textContent = "Check-in Date";
+      if (lblPassengers) lblPassengers.textContent = "Guests";
+      if (searchBtnEl) searchBtnEl.textContent = "Search Stays";
+      if (grid && window.innerWidth > 768) {
+        grid.style.gridTemplateColumns = "1.5fr 1fr 1fr 0.8fr";
+      }
+    } else {
+      if (fromWrapper) fromWrapper.style.display = "block";
+      if (swapBtnEl) swapBtnEl.style.display = "flex";
+      if (checkoutWrapper) checkoutWrapper.style.display = "none";
+      if (lblTo) lblTo.textContent = "To";
+      if (lblDate) lblDate.textContent = "Departure Date";
+      if (lblPassengers) lblPassengers.textContent = "Passengers";
+      if (searchBtnEl) searchBtnEl.textContent = "Search Journeys";
+      if (grid && window.innerWidth > 768) {
+        grid.style.gridTemplateColumns = "1fr auto 1fr 1fr 1fr";
+      }
+    }
+  }
+
   // Tab selections
   document.querySelectorAll(".mode-tab").forEach((tab) => {
     tab.addEventListener("click", (e) => {
       document.querySelectorAll(".mode-tab").forEach((t) => t.classList.remove("active"));
       const target = e.currentTarget;
       target.classList.add("active");
-      window.appState.currentSearch.type = target.getAttribute("data-mode");
+      const mode = target.getAttribute("data-mode");
+      window.appState.currentSearch.type = mode;
+      adjustSearchFormLayout(mode);
     });
   });
+
+  // Trigger initial adjustment
+  adjustSearchFormLayout(window.appState.currentSearch.type);
 
   // Autocomplete bindings
   setupAutocomplete(fromInput, document.getElementById("from-autocomplete"));
@@ -168,7 +237,41 @@ function bindHomeEvents() {
   searchBtn.addEventListener("click", () => {
     const searchVal = window.appState.currentSearch;
 
-    // Validations
+    if (searchVal.type === "stays") {
+      // Stays Search Validation
+      if (!searchVal.to.trim()) {
+        showNotification("Please enter a destination city.", "error");
+        toInput.focus();
+        return;
+      }
+      if (!CITIES.map((c) => c.toLowerCase()).includes(searchVal.to.trim().toLowerCase())) {
+        showNotification(`Destination city is invalid. Select from: ${CITIES.join(", ")}`, "error");
+        return;
+      }
+      if (!searchVal.date) {
+        showNotification("Please select a check-in date.", "error");
+        return;
+      }
+      if (!searchVal.checkoutDate) {
+        showNotification("Please select a check-out date.", "error");
+        return;
+      }
+      if (new Date(searchVal.checkoutDate) <= new Date(searchVal.date)) {
+        showNotification("Check-out date must be after check-in date.", "error");
+        return;
+      }
+      if (searchVal.passengers < 1 || searchVal.passengers > 10) {
+        showNotification("Guests count must be between 1 and 10.", "error");
+        return;
+      }
+
+      // Format input
+      window.appState.currentSearch.to = CITIES.find((c) => c.toLowerCase() === searchVal.to.trim().toLowerCase());
+      navigateTo("#/hotels");
+      return;
+    }
+
+    // Transport Validation
     if (!searchVal.from.trim()) {
       showNotification("Please enter an origin city.", "error");
       fromInput.focus();

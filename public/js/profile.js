@@ -264,10 +264,65 @@ async function initMyTripsView() {
   }
 
   function renderTripCard(booking, isUpcoming) {
+    if (booking.bookingType === "hotel") {
+      return `
+        <div class="trip-ticket-summary card">
+          <div class="trip-summary-header">
+            <span class="provider-tag" style="background: var(--secondary-gradient); color: white;">🏨 ${booking.hotelName}</span>
+            <span class="status-badge ${booking.status.toLowerCase()}">${booking.status}</span>
+          </div>
+          
+          <div class="trip-summary-body">
+            <div class="trip-summary-locations">
+              <div>
+                <h4>Check-In</h4>
+                <p>${formatDisplayDate(booking.checkIn)}</p>
+              </div>
+              <div class="trip-path-arrow">➔</div>
+              <div>
+                <h4>Check-Out</h4>
+                <p>${formatDisplayDate(booking.checkOut)}</p>
+              </div>
+            </div>
+            
+            <div class="trip-summary-details">
+              <p><strong>Room Stay:</strong> ${booking.roomType}</p>
+              <p><strong>Guest(s):</strong> ${booking.passengers.map((p) => p.name).join(", ")}</p>
+              <p><strong>OTA Partner:</strong> ${booking.platform.toUpperCase()}</p>
+            </div>
+            
+            <div class="trip-summary-pricing">
+              <p><strong>Total Paid:</strong> ₹${booking.billing.grandTotal}</p>
+              <p><strong>Booking ID:</strong> ${booking.id}</p>
+            </div>
+          </div>
+          
+          <div class="trip-summary-footer">
+            ${
+              booking.status === "Confirmed"
+                ? `
+              <a href="#/hotel-voucher?bookingId=${booking.id}" class="btn btn-outline btn-sm">View Voucher</a>
+            `
+                : ""
+            }
+            ${
+              isUpcoming && booking.status === "Confirmed"
+                ? `
+              <button class="btn btn-danger btn-sm btn-trigger-cancel" data-id="${booking.id}" data-total="${booking.billing.grandTotal}">
+                Cancel Stay
+              </button>
+            `
+                : ""
+            }
+          </div>
+        </div>
+      `;
+    }
+
     return `
       <div class="trip-ticket-summary card">
         <div class="trip-summary-header">
-          <span class="provider-tag">${booking.provider} (${booking.type.toUpperCase()})</span>
+          <span class="provider-tag">${booking.provider} (Transport)</span>
           <span class="status-badge ${booking.status.toLowerCase()}">${booking.status}</span>
         </div>
         
@@ -366,6 +421,21 @@ async function initMyTripsView() {
       }
 
       if (booking) {
+        if (booking.bookingType === "hotel") {
+          try {
+            await window.dbAPI.cancelBooking(selectedBookingId, null, null, null);
+            showNotification(
+              `Refund of ₹${selectedBookingRefund} initiated successfully! Ref: RZP-REF-9923`,
+              "success"
+            );
+          } catch (err) {
+            console.error("Failed to cancel: ", err);
+            showNotification("Cancellation failed.", "error");
+          }
+          await initMyTripsView();
+          return;
+        }
+
         // Fetch corresponding route to free seat map
         let route = null;
         if (window.useSupabase) {

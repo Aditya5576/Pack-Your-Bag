@@ -125,12 +125,17 @@ function getDB() {
     db = {
       routes: [],
       bookings: [],
+      hotels: [],
       coupons: INITIAL_COUPONS,
       passengers: [{ id: "P-1", name: "Aditya Patil", age: 24, gender: "Male" }]
     };
     localStorage.setItem("bookmytrip_db", JSON.stringify(db));
   } else {
     db = JSON.parse(db);
+    if (!db.hotels) {
+      db.hotels = [];
+      saveDB(db);
+    }
   }
   return db;
 }
@@ -460,11 +465,13 @@ window.dbAPI = {
           .eq("id", bookingId);
         if (bookErr) throw bookErr;
 
-        const { error: routeErr } = await window.supabaseClient
-          .from("routes")
-          .update({ seatLayout: seatLayout, seatsAvailable: seatsAvailable })
-          .eq("id", routeId);
-        if (routeErr) throw routeErr;
+        if (routeId) {
+          const { error: routeErr } = await window.supabaseClient
+            .from("routes")
+            .update({ seatLayout: seatLayout, seatsAvailable: seatsAvailable })
+            .eq("id", routeId);
+          if (routeErr) throw routeErr;
+        }
 
         return true;
       } catch (err) {
@@ -477,10 +484,12 @@ window.dbAPI = {
     if (bIdx > -1) {
       db.bookings[bIdx].status = "Cancelled";
     }
-    const rIdx = db.routes.findIndex((r) => r.id === routeId);
-    if (rIdx > -1) {
-      db.routes[rIdx].seatLayout = seatLayout;
-      db.routes[rIdx].seatsAvailable = seatsAvailable;
+    if (routeId) {
+      const rIdx = db.routes.findIndex((r) => r.id === routeId);
+      if (rIdx > -1) {
+        db.routes[rIdx].seatLayout = seatLayout;
+        db.routes[rIdx].seatsAvailable = seatsAvailable;
+      }
     }
     saveDB(db);
     return true;
@@ -600,13 +609,110 @@ window.dbAPI = {
       }
     }
     return getDB().bookings;
+  },
+
+  // 15. Fetch hotels for a city (Support ScoutingAPI integration)
+  async getHotels(city) {
+    if (window.SCOUTINGAPI_KEY) {
+      try {
+        const response = await fetch(`https://api.scoutingapi.com/v1/search?location=${encodeURIComponent(city)}&limit=8`, {
+          headers: {
+            "Authorization": `Bearer ${window.SCOUTINGAPI_KEY}`
+          }
+        });
+        if (response.ok) {
+          const resJson = await response.json();
+          if (resJson.data && resJson.data.length > 0) {
+            return resJson.data.map((h, i) => ({
+              id: h.id || `HTL-${city.slice(0,3).toUpperCase()}-${100000 + i}`,
+              name: h.name,
+              platform: h.platform || "booking",
+              city: city,
+              rating: h.rating || parseFloat((4.0 + Math.random() * 0.9).toFixed(1)),
+              price: h.price?.rate || h.price || Math.floor(2000 + Math.random() * 3000),
+              photo: h.photos?.[0] || [
+                "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+                "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+                "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80"
+              ][i % 3],
+              amenities: h.amenities || ["Free WiFi", "AC", "Breakfast Included"],
+              description: h.description || "Premium accommodation options retrieved via live ScoutingAPI integration."
+            }));
+          }
+        }
+      } catch (err) {
+        console.error("ScoutingAPI lookup failed, using local fallback:", err);
+      }
+    }
+
+    const db = getDB();
+    return db.hotels.filter((h) => h.city.toLowerCase() === city.toLowerCase());
+  },
+
+  // 16. Fetch specific hotel by ID
+  async getHotelById(hotelId) {
+    const db = getDB();
+    return db.hotels.find((h) => h.id === hotelId) || null;
   }
 };
+
+const HOTEL_NAMES = {
+  luxury: ["The Royal Palace", "Grand Heritage Ritz", "The Sapphire Suites", "Imperia President"],
+  resort: ["Golden Sands Resort", "Whispering Palms Beach Stay", "Azure Oceanfront Resort", "Maris Bay Retreat"],
+  boutique: ["Boutique Hideaway Villa", "The Urban Loft Hotel", "Emerald Eco Stay", "Heritage Manor Boutique"]
+};
+
+function generateLocalHotels() {
+  const hotels = [];
+  const platforms = ["booking", "airbnb", "vrbo", "google"];
+  const photos = [
+    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80"
+  ];
+  const allAmenities = [
+    ["Free WiFi", "Swimming Pool", "Spa", "Fitness Center", "Complimentary Breakfast", "Restaurant", "Bar"],
+    ["Free WiFi", "Beach Access", "Infinity Pool", "Complimentary Breakfast", "Kitchen", "Laundry"],
+    ["Free WiFi", "Kitchen", "Balcony", "Free Parking", "AC", "Smart TV"],
+    ["Free WiFi", "Spa", "Complimentary Breakfast", "Room Service", "Bar", "AC"]
+  ];
+
+  CITIES.forEach((city) => {
+    for (let idx = 0; idx < 4; idx++) {
+      const type = idx === 0 ? "luxury" : idx === 1 ? "resort" : "boutique";
+      const nameTemplate = HOTEL_NAMES[type][Math.floor(Math.random() * HOTEL_NAMES[type].length)];
+      const name = `${city} ${nameTemplate}`;
+      const platform = platforms[idx % platforms.length];
+      const rating = parseFloat((4.0 + Math.random() * 0.9).toFixed(1));
+      const price = Math.floor(1800 + Math.random() * 5000);
+      const photo = photos[idx % photos.length];
+      const amenities = allAmenities[idx % allAmenities.length];
+      const desc = `Located in a prime area of ${city}, this outstanding property offers premium comforts, exceptional hospitality, and standard amenities customized for a relaxing stay.`;
+
+      hotels.push({
+        id: `HTL-${city.slice(0,3).toUpperCase()}-${100000 + Math.floor(Math.random() * 900000)}`,
+        name,
+        platform,
+        city,
+        rating,
+        price,
+        photo,
+        amenities,
+        description: desc
+      });
+    }
+  });
+  return hotels;
+}
 
 // Initial local seed execution for fallback
 (function seedLocalDatabase() {
   const today = new Date();
   const db = getDB();
+  let changed = false;
+
   if (db.routes.length === 0) {
     for (let i = 0; i < 3; i++) {
       const nextDate = new Date(today);
@@ -615,6 +721,15 @@ window.dbAPI = {
       const generated = generateLocalTripsForDate(dateStr);
       db.routes = [...db.routes, ...generated];
     }
+    changed = true;
+  }
+
+  if (db.hotels.length === 0) {
+    db.hotels = generateLocalHotels();
+    changed = true;
+  }
+
+  if (changed) {
     saveDB(db);
   }
 })();
