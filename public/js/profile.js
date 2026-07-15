@@ -37,6 +37,23 @@ async function initProfileView() {
               </div>
               <button type="submit" class="btn btn-primary btn-block">Save Profile Changes</button>
             </form>
+
+            <!-- Resend API Integration Settings -->
+            <div class="resend-api-card" style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.08);">
+              <h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                📧 Email Invoice Settings
+              </h4>
+              <p class="text-muted" style="font-size: 11px; margin-bottom: 12px; line-height: 1.4;">
+                Configure a **Resend API Key** to receive stay vouchers & payment invoice receipts directly to your email.
+              </p>
+              <form id="resend-api-form">
+                <div class="form-group">
+                  <label style="font-size: 11px;">Resend API Key</label>
+                  <input type="password" id="resend-api-key" class="form-control" placeholder="re_123456789..." value="${localStorage.getItem('RESEND_API_KEY') || ''}" style="padding: 8px 12px; font-size: 13px;">
+                </div>
+                <button type="submit" class="btn btn-secondary btn-block btn-sm" style="margin-top: 8px;">Save API Key</button>
+              </form>
+            </div>
           </div>
 
           <!-- Saved Passengers List -->
@@ -123,6 +140,20 @@ async function initProfileView() {
       state.currentUser.mobile = mobileVal;
 
       showNotification("Profile details saved successfully!", "success");
+    });
+
+    // Save Resend API settings
+    const resendForm = document.getElementById("resend-api-form");
+    resendForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const apiKeyVal = document.getElementById("resend-api-key").value.trim();
+      if (apiKeyVal) {
+        localStorage.setItem("RESEND_API_KEY", apiKeyVal);
+        showNotification("Resend API Key saved successfully! Emails are enabled.", "success");
+      } else {
+        localStorage.removeItem("RESEND_API_KEY");
+        showNotification("Resend API Key removed. Emails are disabled.", "info");
+      }
     });
 
     // Toggle add form
