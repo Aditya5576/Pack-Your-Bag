@@ -344,6 +344,14 @@ async function initCheckoutView() {
                     <input type="tel" id="contact-mobile" class="form-control" required value="${window.appState.currentUser?.mobile || "9876543210"}" placeholder="e.g. 9876543210" pattern="[0-9]{10}">
                   </div>
                 </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.08);">
+                  <div class="form-group">
+                    <label style="color: var(--accent-teal); font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                      🔑 Resend API Key <span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">(Optional — required to test email delivery)</span>
+                    </label>
+                    <input type="password" id="checkout-resend-key" class="form-control" placeholder="re_123456789..." value="${localStorage.getItem('RESEND_API_KEY') || ''}" style="margin-top: 4px;">
+                  </div>
+                </div>
               </form>
             </div>
           </main>
@@ -576,6 +584,19 @@ function bindCheckoutEvents(savedPassengers) {
   } else {
     savedList.innerHTML =
       '<p class="text-muted">No saved passenger profiles. They will be saved on first checkout.</p>';
+  }
+
+  // Save Resend Key to localStorage when they type it in checkout
+  const checkoutResendKey = document.getElementById("checkout-resend-key");
+  if (checkoutResendKey) {
+    checkoutResendKey.addEventListener("input", (e) => {
+      const val = e.target.value.trim();
+      if (val) {
+        localStorage.setItem("RESEND_API_KEY", val);
+      } else {
+        localStorage.removeItem("RESEND_API_KEY");
+      }
+    });
   }
 
   // Update passenger details on change
