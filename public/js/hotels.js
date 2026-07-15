@@ -227,9 +227,24 @@ async function openRoomModal(hotelId, numNights) {
   hotelNameEl.textContent = hotel.name;
 
   const roomTypes = [
-    { type: "Standard Room", multiplier: 1.0, desc: "Cozy room with double bed, basic cooling, and free high-speed wifi." },
-    { type: "Deluxe King Room", multiplier: 1.35, desc: "Spacious bedroom with King bed, central AC, balcony views, and mini bar." },
-    { type: "Executive Garden Suite", multiplier: 1.8, desc: "Luxurious suite with separate living lounge, garden deck, bath tub, and VIP services." }
+    { 
+      type: "Standard Room", 
+      multiplier: 1.0, 
+      desc: "Cozy room with double bed, basic cooling, and free high-speed wifi.",
+      specs: ["🛏️ Queen Bed", "📶 Free WiFi", "❄️ AC", "☕ Coffee Maker"]
+    },
+    { 
+      type: "Deluxe King Room", 
+      multiplier: 1.35, 
+      desc: "Spacious bedroom with King bed, central AC, balcony views, and mini bar.",
+      specs: ["🛏️ King Bed", "🌅 Balcony View", "🍹 Mini Bar", "📺 Smart TV", "🚿 Rain Shower"]
+    },
+    { 
+      type: "Executive Garden Suite", 
+      multiplier: 1.8, 
+      desc: "Luxurious suite with separate living lounge, garden deck, bath tub, and VIP services.",
+      specs: ["🛏️ Royal King Bed", "🛋️ Living Lounge", "🛁 Luxury Bathtub", "🏊 Pool Access", "🤵 Butler Service"]
+    }
   ];
 
   roomsBody.innerHTML = `
@@ -245,7 +260,10 @@ async function openRoomModal(hotelId, numNights) {
             <div class="card" style="margin-bottom: 0; padding: 16px; background-color: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
               <div style="flex: 1;">
                 <h4 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">${r.type}</h4>
-                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 0;">${r.desc}</p>
+                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 6px;">${r.desc}</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                  ${r.specs.map(spec => `<span style="font-size: 10px; padding: 2px 8px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-weight: 500;">${spec}</span>`).join('')}
+                </div>
               </div>
               <div style="text-align: right; min-width: 140px;">
                 <h3 style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px;">₹${rate} <span style="font-size: 11px; font-weight: 500; color: var(--text-muted);">/ night</span></h3>
@@ -314,6 +332,13 @@ async function initHotelBookingView(queryParams) {
     checkOut: searchState.checkoutDate,
     passengers: []
   };
+
+  const specsMap = {
+    "Standard Room": ["🛏️ Queen Bed", "📶 Free WiFi", "❄️ AC", "☕ Coffee Maker"],
+    "Deluxe King Room": ["🛏️ King Bed", "🌅 Balcony View", "🍹 Mini Bar", "📺 Smart TV", "🚿 Rain Shower"],
+    "Executive Garden Suite": ["🛏️ Royal King Bed", "🛋️ Living Lounge", "🛁 Luxury Bathtub", "🏊 Pool Access", "🤵 Butler Service"]
+  };
+  const specs = specsMap[roomType] || [];
 
   appView.innerHTML = `
     <div class="booking-flow-container container">
@@ -399,28 +424,37 @@ async function initHotelBookingView(queryParams) {
             <h4 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">${hotel.name}</h4>
             <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">📍 ${hotel.city}</p>
             
-            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"><strong>Room:</strong> ${roomType}</p>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"><strong>Room Type:</strong> ${roomType}</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; margin-bottom: 12px;">
+              ${specs.map(spec => `<span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(0, 242, 254, 0.06); border: 1px solid rgba(0, 242, 254, 0.15); color: var(--accent-teal); font-weight: 500;">${spec}</span>`).join('')}
+            </div>
+
             <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"><strong>Check-in:</strong> ${formatDisplayDate(searchState.date)}</p>
             <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;"><strong>Check-out:</strong> ${formatDisplayDate(searchState.checkoutDate)}</p>
-            <div class="dashed-hr"></div>
-
-            <div class="fare-breakdown-list">
-              <div class="fare-row">
-                <span>Nightly rate (${numNights} nights)</span>
-                <span id="summary-base-fare">₹0</span>
-              </div>
-              <div class="fare-row promo" id="coupon-row" style="display: none;">
-                <span>Coupon (<span id="coupon-code-label">CODE</span>)</span>
-                <span id="summary-discount">-₹0</span>
-              </div>
-              <div class="fare-row">
-                <span>GST Tax (18%)</span>
-                <span id="summary-gst">₹0</span>
-              </div>
-              <div class="dashed-hr"></div>
-              <div class="fare-row total-row">
-                <span>Total Amount</span>
-                <span id="summary-grand-total">₹0</span>
+            
+            <!-- Improved Invoice Design -->
+            <div class="invoice-container" style="background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 8px; margin-top: 10px;">
+              <h4 style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+                🧾 Fare Breakdown
+              </h4>
+              <div class="fare-breakdown-list" style="display: flex; flex-direction: column; gap: 8px;">
+                <div class="fare-row" style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary);">
+                  <span>Base Fare (${numNights} nights)</span>
+                  <span id="summary-base-fare" style="font-weight: 600; color: var(--text-primary);">₹0</span>
+                </div>
+                <div class="fare-row promo" id="coupon-row" style="display: none; justify-content: space-between; font-size: 13px; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 4px 8px; border-radius: 4px; border: 1px dashed rgba(16, 185, 129, 0.3);">
+                  <span>🎁 Discount (<span id="coupon-code-label">CODE</span>)</span>
+                  <span id="summary-discount" style="font-weight: 700;">-₹0</span>
+                </div>
+                <div class="fare-row" style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary);">
+                  <span>SGST & CGST (18%)</span>
+                  <span id="summary-gst" style="font-weight: 600; color: var(--text-primary);">₹0</span>
+                </div>
+                <div style="height: 1px; background: rgba(255, 255, 255, 0.08); margin: 6px 0;"></div>
+                <div class="fare-row total-row" style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--text-primary); padding-top: 2px;">
+                  <span style="color: var(--text-primary);">Estimated Total</span>
+                  <span id="summary-grand-total" style="font-size: 18px; font-weight: 800; color: var(--accent-teal);">₹0</span>
+                </div>
               </div>
             </div>
           </div>
@@ -729,6 +763,21 @@ function initHotelBookingLogic(numNights, rate, numGuests) {
     });
   }
 
+  // Payment Tabs Toggle
+  document.querySelectorAll(".pay-method-tab").forEach((tab) => {
+    tab.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.querySelectorAll(".pay-method-tab").forEach((t) => t.classList.remove("active"));
+      e.currentTarget.classList.add("active");
+
+      const method = e.currentTarget.getAttribute("data-method");
+
+      document.getElementById("view-card").style.display = method === "card" ? "block" : "none";
+      document.getElementById("view-upi").style.display = method === "upi" ? "block" : "none";
+      document.getElementById("view-netbank").style.display = method === "netbank" ? "block" : "none";
+    });
+  });
+
   // Cancel Payment
   document.getElementById("btn-cancel-payment").addEventListener("click", () => {
     overlay.style.display = "none";
@@ -737,26 +786,36 @@ function initHotelBookingLogic(numNights, rate, numGuests) {
 
   // Razorpay complete simulation
   document.getElementById("btn-submit-payment").addEventListener("click", () => {
-    // Validate Card fields
-    const cardVal = cardInp.value.replace(/\s+/g, "");
-    const expiryVal = expiryInp.value.trim();
-    const cvvVal = cvvInp.value.trim();
+    const activeTab = document.querySelector(".pay-method-tab.active").getAttribute("data-method");
+    
+    if (activeTab === "card") {
+      // Validate Card fields
+      const cardVal = cardInp.value.replace(/\s+/g, "");
+      const expiryVal = expiryInp.value.trim();
+      const cvvVal = cvvInp.value.trim();
 
-    const cardRegex = /^\d{12,19}$/;
-    const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
-    const cvvRegex = /^\d{3,4}$/;
+      const cardRegex = /^\d{12,19}$/;
+      const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+      const cvvRegex = /^\d{3,4}$/;
 
-    if (!cardRegex.test(cardVal)) {
-      showNotification("Please enter a valid card number.", "error");
-      return;
-    }
-    if (!expiryRegex.test(expiryVal)) {
-      showNotification("Please enter a valid expiry date (MM/YY).", "error");
-      return;
-    }
-    if (!cvvRegex.test(cvvVal)) {
-      showNotification("Please enter a valid CVV.", "error");
-      return;
+      if (!cardRegex.test(cardVal)) {
+        showNotification("Please enter a valid card number.", "error");
+        return;
+      }
+      if (!expiryRegex.test(expiryVal)) {
+        showNotification("Please enter a valid expiry date (MM/YY).", "error");
+        return;
+      }
+      if (!cvvRegex.test(cvvVal)) {
+        showNotification("Please enter a valid CVV.", "error");
+        return;
+      }
+    } else if (activeTab === "upi") {
+      const upiInput = document.querySelector("#view-upi input").value.trim();
+      if (!upiInput || !upiInput.includes("@")) {
+        showNotification("Please enter a valid UPI ID (e.g. name@bank).", "error");
+        return;
+      }
     }
 
     const loading = document.getElementById("payment-loading");

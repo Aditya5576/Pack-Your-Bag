@@ -27,6 +27,13 @@ async function initHotelVoucherView(queryParams) {
   const diffTime = Math.abs(checkout - checkin);
   const numNights = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
 
+  const specsMap = {
+    "Standard Room": ["🛏️ Queen Bed", "📶 Free WiFi", "❄️ AC", "☕ Coffee Maker"],
+    "Deluxe King Room": ["🛏️ King Bed", "🌅 Balcony View", "🍹 Mini Bar", "📺 Smart TV", "🚿 Rain Shower"],
+    "Executive Garden Suite": ["🛏️ Royal King Bed", "🛋️ Living Lounge", "🛁 Luxury Bathtub", "🏊 Pool Access", "🤵 Butler Service"]
+  };
+  const specs = specsMap[booking.roomType] || [];
+
   appView.innerHTML = `
     <div class="ticket-page-container container" style="max-width: 900px; padding-top: 30px;">
       <!-- Success Celebration Banner -->
@@ -86,6 +93,9 @@ async function initHotelVoucherView(queryParams) {
               <div class="col">
                 <span class="lbl">Reserved Room Type</span>
                 <span class="val" style="color: var(--text-primary); font-size: 16px;">${booking.roomType}</span>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px;">
+                  ${specs.map(spec => `<span style="font-size: 10px; padding: 2px 8px; border-radius: 4px; background: rgba(0, 242, 254, 0.06); border: 1px solid rgba(0, 242, 254, 0.15); color: var(--accent-teal); font-weight: 500;">${spec}</span>`).join('')}
+                </div>
               </div>
               <div class="col" style="text-align: right;">
                 <span class="lbl">Total Guest(s)</span>
@@ -130,31 +140,37 @@ async function initHotelVoucherView(queryParams) {
         <!-- Bill breakdown & actions panel -->
         <aside class="invoice-card">
           <div class="card" style="margin-bottom: 20px;">
-            <h3>Voucher Billing</h3>
+            <h3>Payment Invoice</h3>
             <div class="dashed-hr"></div>
-            <div class="invoice-bill-list">
-              <div class="fare-row">
-                <span>Room Stay Charges</span>
-                <span>₹${booking.billing.baseFare}</span>
-              </div>
-              ${
-                booking.billing.discount > 0
-                  ? `
-                <div class="fare-row promo">
-                  <span>Promo Code Applied</span>
-                  <span>-₹${booking.billing.discount}</span>
+            
+            <div class="invoice-container" style="background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 8px;">
+              <h4 style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+                🧾 Tax Invoice Summary
+              </h4>
+              <div class="invoice-bill-list" style="display: flex; flex-direction: column; gap: 8px;">
+                <div class="fare-row" style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary);">
+                  <span>Room Stay Charges (${numNights} nights)</span>
+                  <span style="font-weight: 600; color: var(--text-primary);">₹${booking.billing.baseFare}</span>
                 </div>
-              `
-                  : ""
-              }
-              <div class="fare-row">
-                <span>SGST & CGST Tax (18%)</span>
-                <span>₹${booking.billing.gst}</span>
-              </div>
-              <div class="dashed-hr"></div>
-              <div class="fare-row grand-total">
-                <span>Amount Paid</span>
-                <span style="color: var(--accent-teal);">₹${booking.billing.grandTotal}</span>
+                ${
+                  booking.billing.discount > 0
+                    ? `
+                  <div class="fare-row promo" style="display: flex; justify-content: space-between; font-size: 13px; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 4px 8px; border-radius: 4px; border: 1px dashed rgba(16, 185, 129, 0.3);">
+                    <span>🎁 Discount Applied</span>
+                    <span style="font-weight: 700;">-₹${booking.billing.discount}</span>
+                  </div>
+                `
+                    : ""
+                }
+                <div class="fare-row" style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary);">
+                  <span>SGST & CGST (18%)</span>
+                  <span style="font-weight: 600; color: var(--text-primary);">₹${booking.billing.gst}</span>
+                </div>
+                <div style="height: 1px; background: rgba(255, 255, 255, 0.08); margin: 6px 0;"></div>
+                <div class="fare-row grand-total" style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--text-primary); padding-top: 2px;">
+                  <span style="color: var(--text-primary);">Amount Paid</span>
+                  <span style="font-size: 18px; font-weight: 800; color: var(--accent-teal);">₹${booking.billing.grandTotal}</span>
+                </div>
               </div>
             </div>
           </div>
