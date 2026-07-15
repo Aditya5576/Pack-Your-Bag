@@ -548,7 +548,15 @@ window.dbAPI = {
   },
 
   async sendInvoiceEmail(booking) {
-    const apiKey = localStorage.getItem("RESEND_API_KEY");
+    let apiKey = localStorage.getItem("RESEND_API_KEY");
+    if (!apiKey) {
+      const checkoutKeyInput = document.getElementById("checkout-resend-key");
+      if (checkoutKeyInput && checkoutKeyInput.value.trim()) {
+        apiKey = checkoutKeyInput.value.trim();
+        localStorage.setItem("RESEND_API_KEY", apiKey); // Save it for convenience
+      }
+    }
+
     if (!apiKey) {
       console.log("Resend API Key not configured. Skipping email invoice dispatch.");
       return;
@@ -703,7 +711,15 @@ window.dbAPI = {
       `;
     }
 
-    const fromEmail = localStorage.getItem("RESEND_FROM_EMAIL") || "onboarding@resend.dev";
+    let fromEmail = localStorage.getItem("RESEND_FROM_EMAIL");
+    if (!fromEmail) {
+      const checkoutSenderInput = document.getElementById("checkout-resend-sender");
+      if (checkoutSenderInput && checkoutSenderInput.value.trim()) {
+        fromEmail = checkoutSenderInput.value.trim();
+        localStorage.setItem("RESEND_FROM_EMAIL", fromEmail);
+      }
+    }
+    if (!fromEmail) fromEmail = "onboarding@resend.dev";
 
     try {
       const response = await fetch("/api/send-email", {
