@@ -703,12 +703,15 @@ window.dbAPI = {
       `;
     }
 
+    const fromEmail = localStorage.getItem("RESEND_FROM_EMAIL") || "onboarding@resend.dev";
+
     try {
       const response = await fetch("/api/send-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Resend-Key": apiKey
+          "X-Resend-Key": apiKey,
+          "X-Resend-From": fromEmail
         },
         body: JSON.stringify(booking)
       });
@@ -721,7 +724,11 @@ window.dbAPI = {
       showNotification("Invoice voucher emailed successfully!", "success");
     } catch (err) {
       console.error("Resend email delivery failed: ", err);
-      showNotification("Email dispatch failed: " + err.message, "error");
+      let errMsg = err.message;
+      if (errMsg.toLowerCase().includes("to") || errMsg.toLowerCase().includes("verify") || errMsg.toLowerCase().includes("restriction")) {
+        errMsg += " (Note: Sandbox Resend accounts can only send to their own registered owner email. Please check your recipient address.)";
+      }
+      showNotification("Email dispatch failed: " + errMsg, "error");
     }
   },
 

@@ -438,12 +438,18 @@ async function initHotelBookingView(queryParams) {
                   <input type="tel" id="contact-mobile" class="form-control" placeholder="10-digit Mobile" pattern="[0-9]{10}" value="${window.appState.currentUser.mobile}" required>
                 </div>
               </div>
-              <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.08);">
+              <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.08); display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <div class="form-group">
                   <label style="color: var(--accent-teal); font-weight: bold; display: flex; align-items: center; gap: 4px;">
-                    🔑 Resend API Key <span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">(Optional — required to test email delivery)</span>
+                    🔑 Resend API Key <span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">(Optional)</span>
                   </label>
-                  <input type="password" id="checkout-resend-key" class="form-control" placeholder="re_123456789..." value="${localStorage.getItem('RESEND_API_KEY') || ''}" style="margin-top: 4px;">
+                  <input type="password" id="checkout-resend-key" class="form-control" placeholder="re_12345..." value="${localStorage.getItem('RESEND_API_KEY') || ''}" style="margin-top: 4px;">
+                </div>
+                <div class="form-group">
+                  <label style="color: var(--accent-teal); font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                    ✉️ Resend Sender Email <span style="font-size: 10px; font-weight: normal; color: var(--text-muted);">(Optional)</span>
+                  </label>
+                  <input type="email" id="checkout-resend-sender" class="form-control" placeholder="onboarding@resend.dev" value="${localStorage.getItem('RESEND_FROM_EMAIL') || 'onboarding@resend.dev'}" style="margin-top: 4px;">
                 </div>
               </div>
             </div>
@@ -712,6 +718,18 @@ function initHotelBookingLogic(numNights, rate, numGuests) {
         localStorage.setItem("RESEND_API_KEY", val);
       } else {
         localStorage.removeItem("RESEND_API_KEY");
+      }
+    });
+  }
+
+  const checkoutResendSender = document.getElementById("checkout-resend-sender");
+  if (checkoutResendSender) {
+    checkoutResendSender.addEventListener("input", (e) => {
+      const val = e.target.value.trim();
+      if (val) {
+        localStorage.setItem("RESEND_FROM_EMAIL", val);
+      } else {
+        localStorage.setItem("RESEND_FROM_EMAIL", "onboarding@resend.dev");
       }
     });
   }

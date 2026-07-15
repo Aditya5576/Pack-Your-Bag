@@ -2,14 +2,18 @@ import { test, expect } from "@playwright/test";
 
 test.describe("BookMyTrip E2E Integration Suite", () => {
   test.beforeEach(async ({ page }) => {
-    // Intercept and immediately fail all network calls to Supabase.
-    // This forces the client to trigger its built-in localStorage fallback instantly,
-    // making the tests fast, self-contained, and offline-compatible.
-    await page.route("**/supabase.co/**", (route) => {
-      route.abort("failed");
+    // Force the client to run in localStorage fallback mode for fast, offline, and isolated tests
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "supabase", {
+        value: undefined,
+        writable: false,
+        configurable: false
+      });
     });
 
     await page.goto("/");
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
   });
 
   test("should load home page and perform a route search query", async ({ page }) => {
