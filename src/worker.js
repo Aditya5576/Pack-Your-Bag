@@ -7,8 +7,8 @@ export default {
       try {
         const booking = await request.json();
         
-        // Read key from custom header (UI settings), Worker environment variables, or default fallback
-        const apiKey = request.headers.get("X-Resend-Key") || env.RESEND_API_KEY || "re_aPsZpkTp_EebXuYJBCKKMNXosXKcKdtje";
+        // Read key from custom header (UI settings) or Worker environment variables
+        const apiKey = request.headers.get("X-Resend-Key") || env.RESEND_API_KEY;
         if (!apiKey) {
           return new Response(
             JSON.stringify({

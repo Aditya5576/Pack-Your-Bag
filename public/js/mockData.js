@@ -557,9 +557,7 @@ window.dbAPI = {
       }
     }
 
-    if (!apiKey) {
-      apiKey = "re_aPsZpkTp_EebXuYJBCKKMNXosXKcKdtje";
-    }
+
 
     if (!apiKey) {
       console.log("Resend API Key not configured. Skipping email invoice dispatch.");
