@@ -704,19 +704,13 @@ window.dbAPI = {
     }
 
     try {
-      const fromEmail = "BookMyTrip <onboarding@resend.dev>";
-      const response = await fetch("https://api.resend.com/emails", {
+      const response = await fetch("/api/send-email", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "X-Resend-Key": apiKey
         },
-        body: JSON.stringify({
-          from: fromEmail,
-          to: booking.email,
-          subject: `🎉 Booking Confirmed: ${isHotel ? booking.hotelName : booking.provider} (ID: ${booking.id})`,
-          html: emailHtml
-        })
+        body: JSON.stringify(booking)
       });
 
       const resData = await response.json();

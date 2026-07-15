@@ -3,7 +3,7 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [cloudflare()],
+  plugins: (process.env.TEST_MODE || process.env.VITEST) ? [] : [cloudflare()],
   test: {
     environment: "jsdom",
     globals: true,
