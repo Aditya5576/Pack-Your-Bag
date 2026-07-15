@@ -7,8 +7,8 @@ export default {
       try {
         const booking = await request.json();
         
-        // Read key from custom header (UI settings) or Worker environment variables
-        const apiKey = request.headers.get("X-Resend-Key") || env.RESEND_API_KEY;
+        // Read key from custom header (UI settings), Worker environment variables, or default fallback
+        const apiKey = request.headers.get("X-Resend-Key") || env.RESEND_API_KEY || "re_aPsZpkTp_EebXuYJBCKKMNXosXKcKdtje";
         if (!apiKey) {
           return new Response(
             JSON.stringify({
@@ -173,6 +173,8 @@ export default {
           `;
         }
 
+        const fromEmail = request.headers.get("X-Resend-From") || "onboarding@resend.dev";
+
         const response = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
@@ -180,7 +182,7 @@ export default {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            from: "onboarding@resend.dev",
+            from: fromEmail,
             to: booking.email,
             subject: `🎉 Booking Confirmed: ${isHotel ? booking.hotelName : booking.provider} (ID: ${booking.id})`,
             html: emailHtml
