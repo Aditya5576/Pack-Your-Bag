@@ -1422,15 +1422,30 @@
     padding: 0 !important;
   }
   .ticket-invoice-grid {
-    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
     margin: 0 !important;
+    padding: 0 !important;
   }
   .ticket-card {
-    display: none !important;
+    display: block !important;
+    order: 2 !important; /* Position below retail invoice on print */
+    page-break-inside: avoid !important;
+    border: 1px dashed #cbd5e1 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #1e293b !important;
+    padding: 15px !important;
+    margin-top: 10px !important;
   }
   .ticket-header {
-    background: #000000 !important;
+    background: #0f172a !important; /* Match invoice th dark navy background */
     color: #ffffff !important;
+    border-bottom: 2px solid #ea580c !important; /* Orange line matching invoice theme */
+    padding: 10px 15px !important;
+    border-radius: 6px 6px 0 0 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -1439,28 +1454,34 @@
   }
   .ticket-body {
     background-color: #ffffff !important;
-    color: #000000 !important;
-    border: 1px solid #cccccc !important;
+    color: #1e293b !important;
+    border: none !important;
+    padding: 10px 0 !important;
   }
   .ticket-row .val,
   .ticket-row .time,
   .ticket-row .station {
-    color: #000000 !important;
+    color: #0f172a !important;
+  }
+  .ticket-row .lbl,
+  .ticket-row .date {
+    color: #64748b !important;
   }
   .qr-code-wrapper {
-    border: 1px solid #cccccc !important;
+    border: 1px solid #cbd5e1 !important;
   }
   
   /* Printable Retail Invoice styles */
   .retail-invoice-container {
     display: block !important;
+    order: 1 !important; /* Keep retail invoice at the top */
     background: #ffffff !important;
     color: #1e293b !important;
-    border: none !important;
+    border: 1px solid #cbd5e1 !important;
     box-shadow: none !important;
-    padding: 0 !important;
+    padding: 15px 20px !important;
     margin: 0 !important;
-    page-break-before: auto !important; /* Start on page 1 since ticket is hidden */
+    page-break-before: auto !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
   }
 
