@@ -1198,7 +1198,6 @@
   .navbar-header,
   .footer-section,
   .success-banner,
-  .invoice-card,
   .action-buttons-invoice {
     display: none !important;
   }
@@ -1241,6 +1240,34 @@
   }
   .qr-code-wrapper {
     border: 1px solid #cccccc !important;
+  }
+  
+  /* Printable Retail Invoice styles */
+  .retail-invoice-container {
+    display: block !important;
+    background: #ffffff !important;
+    color: #1e293b !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 20px 0 !important;
+    margin: 20px 0 0 0 !important;
+    page-break-before: always; /* Force start on page 2 */
+  }
+
+  .retail-invoice-container * {
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  .retail-invoice-container svg text {
+    fill: #0f172a !important;
+  }
+
+  .retail-invoice-container table th {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
 
