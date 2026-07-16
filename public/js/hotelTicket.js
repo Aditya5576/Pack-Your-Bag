@@ -190,6 +190,9 @@ async function initHotelVoucherView(queryParams) {
 
         <!-- Retail Invoice Receipt Card (Customized PDF Template style) -->
         <aside class="invoice-card retail-invoice-container" id="printable-retail-invoice">
+          <!-- Elegant Top Header Banner Image -->
+          <div class="invoice-banner"></div>
+
           <!-- Elegant Wave Lines (Top Right decoration) -->
           <svg class="invoice-wave-lines" width="300" height="150" viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path class="wave-1" d="M10 140 C 90 60, 200 100, 290 10" stroke-width="2" stroke-linecap="round" />
@@ -219,12 +222,15 @@ async function initHotelVoucherView(queryParams) {
           <!-- Invoice Details Meta Grid -->
           <div class="invoice-meta-grid">
             <div>
-              <h4>Bill To</h4>
-              <p style="font-weight: 700; margin: 0 0 2px 0;">${booking.passengers[0].name}</p>
-              <p style="margin: 0;">Rankala Lake Road,<br>Kolhapur, Maharashtra<br>416012</p>
+              <h4>Bill To (Passenger)</h4>
+              <p style="font-weight: 700; margin: 0 0 2px 0;">${booking.passengers.map((p) => p.name).join(", ")}</p>
+              <p style="margin: 0; font-size: 11px;">Email: ${booking.email || 'aditya@example.com'}</p>
+              <p style="margin: 0 0 6px 0; font-size: 11px;">Phone: ${booking.phone || '+91 98765 43210'}</p>
+              <p style="font-weight: 700; margin: 6px 0 2px 0; font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Company</p>
+              <p style="margin: 0;">Shree Swami Samarth Industries,<br>Jaysingpur, Maharashtra<br>416101</p>
             </div>
             <div>
-              <h4>Company Name</h4>
+              <h4>Company Name (Seller)</h4>
               <p style="font-weight: 700; margin: 0 0 2px 0;">Pack Your Bags Pvt. Ltd.</p>
               <p style="margin: 0;">I-1A, Sector 25A,<br>Noida, 201301<br>Phone: +91 99999 99999</p>
             </div>
@@ -308,8 +314,11 @@ async function initHotelVoucherView(queryParams) {
             </div>
           </div>
 
-          <!-- Bottom compliance tagline -->
-          <div class="invoice-bottom-compliance">
+          <!-- Bottom compliance tagline & PAID stamp wrapper -->
+          <div class="invoice-bottom-compliance" style="position: relative;">
+            <div class="paid-stamp-wrapper" style="position: absolute; bottom: 15px; right: 10px; transform: rotate(-12deg); opacity: 0.15; pointer-events: none; border: 3px dashed var(--accent-purple); border-radius: 8px; padding: 4px 12px; z-index: 10;">
+              <span style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; letter-spacing: 2px; color: var(--accent-purple); text-transform: uppercase;">PAID</span>
+            </div>
             <p class="pay-tag">Please pay within 30 days of invoice date.</p>
             <p style="margin: 0;">It was wonderful doing business with you. Thank you!</p>
           </div>

@@ -1400,6 +1400,15 @@
   margin: 0 0 2px 0;
 }
 
+.invoice-banner {
+  background: url('/images/invoice_header_banner.png') no-repeat center center;
+  background-size: cover;
+  height: 65px;
+  margin: -25px -25px 25px -25px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border-bottom: 2px solid var(--accent-purple);
+}
+
 /* Print Styles Override Media Queries */
 @media print {
   body {
@@ -1566,6 +1575,27 @@
 
   .retail-invoice-container .invoice-bottom-compliance p.pay-tag {
     color: #0f172a !important;
+  }
+
+  .retail-invoice-container .invoice-banner {
+    display: block !important;
+    background: url('/images/invoice_header_banner.png') no-repeat center center !important;
+    background-size: cover !important;
+    height: 65px !important;
+    margin: -15px -20px 20px -20px !important;
+    border-radius: 6px 6px 0 0 !important;
+    border-bottom: 2px solid #ea580c !important; /* Orange divider line */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .retail-invoice-container .paid-stamp-wrapper {
+    opacity: 0.85 !important;
+    border: 3px dashed #ea580c !important;
+  }
+
+  .retail-invoice-container .paid-stamp-wrapper span {
+    color: #ea580c !important;
   }
 }
 
