@@ -226,13 +226,12 @@ async function initHotelVoucherView(queryParams) {
               <p style="font-weight: 700; margin: 0 0 2px 0;">${booking.passengers.map((p) => p.name).join(", ")}</p>
               <p style="margin: 0; font-size: 11px;">Email: ${booking.email || 'aditya@example.com'}</p>
               <p style="margin: 0 0 6px 0; font-size: 11px;">Phone: ${booking.phone || '+91 98765 43210'}</p>
-              <p style="font-weight: 700; margin: 6px 0 2px 0; font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Company</p>
-              <p style="margin: 0;">Shree Swami Samarth Industries,<br>Jaysingpur, Maharashtra<br>416101</p>
+              <p style="margin: 0;">Rankala Lake Road,<br>Kolhapur, Maharashtra<br>416012</p>
             </div>
             <div>
-              <h4>Company Name (Seller)</h4>
-              <p style="font-weight: 700; margin: 0 0 2px 0;">Pack Your Bags Pvt. Ltd.</p>
-              <p style="margin: 0;">I-1A, Sector 25A,<br>Noida, 201301<br>Phone: +91 99999 99999</p>
+              <h4>Company Name</h4>
+              <p style="font-weight: 700; margin: 0 0 2px 0;">Shree Swami Samarth Industries</p>
+              <p style="margin: 0;">I-1A, Sector 25A,<br>Jaysingpur, Maharashtra<br>416101<br>Phone: +91 99999 99999</p>
             </div>
           </div>
 
