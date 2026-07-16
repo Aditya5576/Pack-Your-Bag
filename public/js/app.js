@@ -39,7 +39,41 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.addEventListener("hashchange", router);
   router(); // Run router for initial load
   initMobileNav(); // Initialize hamburger navigation
+  initSplashScreen(); // Handle startup splash screen dismiss
 });
+
+// Animate and dismiss splash screen on startup
+function initSplashScreen() {
+  const splash = document.getElementById("splash-screen");
+  if (!splash) return;
+
+  // Skip animations instantly in E2E automated environments to avoid test execution delay/timeouts
+  const isAutomation = navigator.webdriver || window.location.search.includes("test=true") || localStorage.getItem("TEST_MODE") === "true" || window.useSupabase === false;
+  if (isAutomation) {
+    splash.remove();
+    return;
+  }
+
+  const progressBar = splash.querySelector(".splash-progress");
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 15 + 8;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      setTimeout(() => {
+        splash.classList.add("fade-out");
+        setTimeout(() => {
+          splash.remove();
+        }, 500); // Wait for transition to complete
+      }, 200);
+    }
+    if (progressBar) {
+      progressBar.style.width = `${progress}%`;
+    }
+  }, 100);
+}
+
 
 // Mobile Hamburger Navigation Toggle
 function initMobileNav() {

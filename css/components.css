@@ -15,6 +15,9 @@
   font-weight: 800;
   margin-bottom: 12px;
   letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #f3f4f6 20%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-content p {
@@ -67,6 +70,7 @@
 .mode-tab.active {
   background: var(--primary-gradient);
   color: #fff;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
 }
 
 .search-form-grid {

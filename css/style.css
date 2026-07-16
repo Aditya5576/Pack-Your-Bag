@@ -37,7 +37,7 @@
 }
 
 body {
-  background-color: var(--dark-bg);
+  background: radial-gradient(circle at 50% -20%, rgba(124, 58, 237, 0.12) 0%, rgba(15, 23, 42, 0) 65%), var(--dark-bg);
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
@@ -140,6 +140,12 @@ a {
   padding: 24px;
   box-shadow: var(--shadow-md);
   margin-bottom: 24px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(124, 58, 237, 0.3);
+  box-shadow: 0 12px 30px rgba(124, 58, 237, 0.08);
 }
 
 .card.glass {
@@ -369,4 +375,97 @@ a {
     opacity: 0;
     transform: scale(0.9);
   }
+}
+
+/* --- SPLASH SCREEN STYLES --- */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 30%, #17103a 0%, #080a12 80%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+  opacity: 1;
+  visibility: visible;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.splash-content {
+  text-align: center;
+  max-width: 400px;
+  width: 80%;
+}
+
+.splash-logo-container {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(0, 242, 254, 0.15);
+  animation: logo-pulse 2s infinite ease-in-out;
+}
+
+.splash-logo-container svg {
+  width: 52px;
+  height: 52px;
+}
+
+@keyframes logo-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 30px rgba(0, 242, 254, 0.15);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 50px rgba(0, 242, 254, 0.3);
+  }
+}
+
+.splash-brand {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+.splash-tagline {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+  letter-spacing: 0.2px;
+}
+
+.splash-loader-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+.splash-progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+  border-radius: 99px;
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.8);
+  transition: width 0.1s linear;
 }
