@@ -382,7 +382,11 @@ async function initHotelBookingView(queryParams) {
               <div class="dashed-hr"></div>
               ${Array(numGuests)
                 .fill(null)
-                .map((_, idx) => `
+                .map((_, idx) => {
+                  const defaultName = (idx === 0 && window.appState.currentUser) ? window.appState.currentUser.name : "";
+                  const defaultAge = (idx === 0 && window.appState.currentUser) ? (window.appState.currentUser.age || 24) : "";
+                  const defaultGender = (idx === 0 && window.appState.currentUser) ? (window.appState.currentUser.gender || "Male") : "Male";
+                  return `
                 <div class="passenger-card-item">
                   <div class="p-card-header">
                     <h4>Guest ${idx + 1}</h4>
@@ -391,23 +395,24 @@ async function initHotelBookingView(queryParams) {
                   <div class="form-grid">
                     <div class="form-group">
                       <label>Full Name</label>
-                      <input type="text" class="form-control g-name" data-index="${idx}" placeholder="Enter Name" required>
+                      <input type="text" class="form-control g-name" data-index="${idx}" value="${defaultName}" placeholder="Enter Name" required>
                     </div>
                     <div class="form-group">
                       <label>Age</label>
-                      <input type="number" class="form-control g-age" data-index="${idx}" min="1" max="120" placeholder="Age" required>
+                      <input type="number" class="form-control g-age" data-index="${idx}" value="${defaultAge}" min="1" max="120" placeholder="Age" required>
                     </div>
                     <div class="form-group">
                       <label>Gender</label>
                       <select class="form-control g-gender" data-index="${idx}">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
+                        <option value="Male" ${defaultGender === "Male" ? "selected" : ""}>Male</option>
+                        <option value="Female" ${defaultGender === "Female" ? "selected" : ""}>Female</option>
+                        <option value="Other" ${defaultGender === "Other" ? "selected" : ""}>Other</option>
                       </select>
                     </div>
                   </div>
                 </div>
-              `).join("")}
+                `;
+                }).join("")}
             </div>
 
             <!-- Dynamic Room Number Selector -->
@@ -431,11 +436,11 @@ async function initHotelBookingView(queryParams) {
               <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
                 <div class="form-group">
                   <label>Email Address</label>
-                  <input type="email" id="contact-email" class="form-control" placeholder="your@email.com" value="${window.appState.currentUser.email}" required>
+                  <input type="email" id="contact-email" class="form-control" placeholder="your@email.com" value="${window.appState.currentUser ? window.appState.currentUser.email : ''}" required>
                 </div>
                 <div class="form-group">
                   <label>Mobile Number</label>
-                  <input type="tel" id="contact-mobile" class="form-control" placeholder="10-digit Mobile" pattern="[0-9]{10}" value="${window.appState.currentUser.mobile}" required>
+                  <input type="tel" id="contact-mobile" class="form-control" placeholder="10-digit Mobile" pattern="[0-9]{10}" value="${window.appState.currentUser ? window.appState.currentUser.mobile : ''}" required>
                 </div>
               </div>
               <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.08); display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">

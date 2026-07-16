@@ -318,7 +318,7 @@ async function initHotelVoucherView(queryParams) {
             <div class="paid-stamp-wrapper" style="position: absolute; bottom: 15px; right: 10px; transform: rotate(-12deg); opacity: 0.15; pointer-events: none; border: 3px dashed var(--accent-purple); border-radius: 8px; padding: 4px 12px; z-index: 10;">
               <span style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; letter-spacing: 2px; color: var(--accent-purple); text-transform: uppercase;">PAID</span>
             </div>
-            <p class="pay-tag">Please pay within 30 days of invoice date.</p>
+            <p class="pay-tag">Payment received in full.</p>
             <p style="margin: 0;">It was wonderful doing business with you. Thank you!</p>
           </div>
 
