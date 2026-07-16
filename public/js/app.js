@@ -196,10 +196,9 @@ function router() {
   const path = hash.split("?")[0] || "";
   const queryParams = parseQueryParams(hash);
 
-  // Authenticated route interceptor
-  const requiresAuth = ["#/profile", "#/my-trips", "#/checkout", "#/hotel-booking"];
-  if (requiresAuth.includes(path) && !window.appState.currentUser) {
-    showNotification("Please sign in to access this page.", "warning");
+  // Protect all routes by default: require login first unless trying to access login or signup pages
+  const publicRoutes = ["#/login", "#/signup"];
+  if (!window.appState.currentUser && !publicRoutes.includes(path)) {
     navigateTo("#/login");
     return;
   }
