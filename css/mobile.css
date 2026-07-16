@@ -975,3 +975,100 @@ html {
     margin: 0;
   }
 }
+
+/* =============================================
+   15. STAYS & CHECKOUT MOBILE OVERRIDES
+   ============================================= */
+@media (max-width: 768px) {
+  /* --- Stays Results & Listing Cards --- */
+  .trip-result-card .trip-card-main {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+  
+  .trip-result-card .col-provider {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+    height: 180px !important;
+  }
+  
+  .trip-result-card .col-price-action {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    text-align: left !important;
+    margin-top: 8px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    padding-top: 12px;
+  }
+
+  .trip-result-card .col-price-action .price-section {
+    text-align: left !important;
+  }
+
+  .trip-result-card .col-price-action .btn {
+    width: auto !important;
+    min-height: 40px !important;
+  }
+
+  /* --- Hotel Room Selection Modal Room Listings --- */
+  #modal-rooms-body .card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 14px !important;
+  }
+
+  #modal-rooms-body .card > div {
+    width: 100% !important;
+  }
+
+  #modal-rooms-body .card > div:nth-child(2) {
+    min-width: 0 !important;
+    text-align: left !important;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    padding-top: 12px;
+    margin-top: 8px;
+  }
+
+  #modal-rooms-body .card .btn {
+    width: 100% !important;
+    margin-top: 8px;
+  }
+
+  /* --- Checkout Form Grids (Hotel & Transport) --- */
+  #hotel-guest-info-form .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Force Resend API key config fields (hotels & transport) to single column on mobile */
+  #hotel-guest-info-form div[style*="grid-template-columns: 1fr 1fr;"],
+  #booking-checkout-form div[style*="grid-template-columns: 1fr 1fr;"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Remove top ordering from stays summary panel to allow natural bottom stacking */
+  .booking-summary-panel {
+    order: unset !important;
+  }
+
+  /* --- Printable Voucher Page & Text Alignments --- */
+  .ticket-page-container {
+    padding-top: 20px !important;
+  }
+
+  #printable-hotel-voucher .ticket-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  #printable-hotel-voucher .ticket-row .col {
+    text-align: left !important;
+    width: 100% !important;
+  }
+}
