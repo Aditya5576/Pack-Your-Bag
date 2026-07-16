@@ -993,10 +993,10 @@
 
 .ticket-invoice-grid {
   display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 24px;
-  margin-top: 24px;
-  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+  align-items: stretch; /* Stretch children to equal heights */
 }
 
 @media (max-width: 900px) {
@@ -1009,6 +1009,11 @@
 .ticket-card {
   padding: 0;
   overflow: hidden;
+  background: var(--panel-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(12px);
 }
 
 .ticket-header {
@@ -1040,7 +1045,7 @@
 
 .ticket-body {
   padding: 24px;
-  background-color: #111827;
+  background: transparent;
 }
 
 .ticket-row {
@@ -1050,7 +1055,8 @@
 }
 
 .ticket-row.route-row {
-  background-color: rgba(31, 41, 55, 0.3);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
   padding: 16px;
   border-radius: var(--radius-sm);
   align-items: center;
@@ -1401,12 +1407,25 @@
 }
 
 .invoice-banner {
-  background: url('/images/invoice_header_banner.png') no-repeat center center;
-  background-size: cover;
-  height: 65px;
-  margin: -25px -25px 25px -25px;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
-  border-bottom: 2px solid var(--accent-purple);
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.15), rgba(124, 58, 237, 0.15)) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--accent-purple) !important;
+  height: 60px !important;
+  margin: -25px -25px 25px -25px !important;
+  border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.invoice-banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 80% 50%, rgba(0, 242, 254, 0.12), transparent 50%) !important;
+  pointer-events: none;
 }
 
 /* Print Styles Override Media Queries */
