@@ -189,49 +189,49 @@ async function initHotelVoucherView(queryParams) {
         </main>
 
         <!-- Retail Invoice Receipt Card (Customized PDF Template style) -->
-        <aside class="invoice-card retail-invoice-container" id="printable-retail-invoice" style="background: var(--panel-bg); color: var(--text-primary); border: 1px solid var(--glass-border); border-radius: var(--radius-md); font-family: 'Plus Jakarta Sans', sans-serif; position: relative; overflow: hidden; padding: 25px; box-shadow: var(--shadow-md);">
+        <aside class="invoice-card retail-invoice-container" id="printable-retail-invoice">
           <!-- Elegant Wave Lines (Top Right decoration) -->
-          <svg class="invoice-wave-lines" width="300" height="150" viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; right: 0; opacity: 0.15; pointer-events: none;">
-            <path d="M10 140 C 90 60, 200 100, 290 10" stroke="var(--accent-purple)" stroke-width="2" stroke-linecap="round" />
-            <path d="M40 140 C 110 70, 220 110, 300 30" stroke="var(--accent-teal)" stroke-width="1.5" stroke-linecap="round" />
+          <svg class="invoice-wave-lines" width="300" height="150" viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="wave-1" d="M10 140 C 90 60, 200 100, 290 10" stroke-width="2" stroke-linecap="round" />
+            <path class="wave-2" d="M40 140 C 110 70, 220 110, 300 30" stroke-width="1.5" stroke-linecap="round" />
           </svg>
 
           <!-- Header Section -->
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; position: relative; z-index: 2;">
+          <div class="invoice-header-row">
             <!-- Ticket Brand Stamp SVG -->
             <div>
-              <svg width="150" height="90" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 20 C 10 15, 15 10, 20 10 L 200 10 C 205 10, 210 15, 210 20 L 210 50 C 200 50, 200 60, 210 60 L 210 90 C 200 90, 200 100, 210 100 L 210 130 C 210 135, 205 140, 200 140 L 20 140 C 15 140, 10 135, 10 130 L 10 100 C 20 100, 20 90, 10 90 L 10 60 C 20 60, 20 50, 10 50 Z" fill="rgba(255, 255, 255, 0.02)" stroke="var(--glass-border)" stroke-width="4" stroke-dasharray="6,4"/>
-                <text x="110" y="60" font-family="'Outfit', sans-serif" font-weight="900" font-size="26" fill="var(--text-primary)" text-anchor="middle">PACK YOUR</text>
-                <text x="110" y="100" font-family="'Outfit', sans-serif" font-weight="900" font-size="34" fill="var(--text-primary)" text-anchor="middle">BAGS</text>
+              <svg class="invoice-stamp-logo" width="150" height="90" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 20 C 10 15, 15 10, 20 10 L 200 10 C 205 10, 210 15, 210 20 L 210 50 C 200 50, 200 60, 210 60 L 210 90 C 200 90, 200 100, 210 100 L 210 130 C 210 135, 205 140, 200 140 L 20 140 C 15 140, 10 135, 10 130 L 10 100 C 20 100, 20 90, 10 90 L 10 60 C 20 60, 20 50, 10 50 Z" stroke-width="4" stroke-dasharray="6,4"/>
+                <text x="110" y="60" font-family="'Outfit', sans-serif" font-weight="900" font-size="26" text-anchor="middle">PACK YOUR</text>
+                <text x="110" y="100" font-family="'Outfit', sans-serif" font-weight="900" font-size="34" text-anchor="middle">BAGS</text>
                 <path d="M170 105 L190 102 L182 118 L178 112 Z" fill="#ef4444"/>
                 <path d="M170 105 L178 112 L182 118 Z" fill="#dc2626"/>
               </svg>
             </div>
             <!-- Invoice Details -->
             <div style="text-align: right;">
-              <h1 style="color: var(--accent-purple); font-size: 32px; font-weight: 800; margin: 0; letter-spacing: 1.5px;">INVOICE</h1>
-              <p style="font-size: 11px; color: var(--text-secondary); margin: 4px 0 0 0; font-weight: 700;">Retail Invoice No: REC-${bookingId.split("-")[1] || bookingId}</p>
-              <p style="font-size: 11px; color: var(--accent-teal); margin: 2px 0 0 0; font-weight: 700;">www.packyourbags.com</p>
+              <h1 class="invoice-title">INVOICE</h1>
+              <p class="invoice-subtitle">Retail Invoice No: REC-${bookingId.split("-")[1] || bookingId}</p>
+              <p class="invoice-link">www.packyourbags.com</p>
             </div>
           </div>
 
           <!-- Invoice Details Meta Grid -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
+          <div class="invoice-meta-grid">
             <div>
-              <h4 style="color: var(--text-primary); font-size: 12px; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">Bill To</h4>
-              <p style="font-weight: 700; color: var(--text-primary); margin: 0 0 2px 0;">${booking.passengers[0].name}</p>
+              <h4>Bill To</h4>
+              <p style="font-weight: 700; margin: 0 0 2px 0;">${booking.passengers[0].name}</p>
               <p style="margin: 0;">Rankala Lake Road,<br>Kolhapur, Maharashtra<br>416012</p>
             </div>
             <div>
-              <h4 style="color: var(--text-primary); font-size: 12px; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">Company Name</h4>
-              <p style="font-weight: 700; color: var(--text-primary); margin: 0 0 2px 0;">Pack Your Bags Pvt. Ltd.</p>
+              <h4>Company Name</h4>
+              <p style="font-weight: 700; margin: 0 0 2px 0;">Pack Your Bags Pvt. Ltd.</p>
               <p style="margin: 0;">I-1A, Sector 25A,<br>Noida, 201301<br>Phone: +91 99999 99999</p>
             </div>
           </div>
 
           <!-- Dates & GST details -->
-          <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 25px;">
+          <div class="invoice-dates-row">
             <div>
               <strong>Invoice Date:</strong> ${new Date(booking.bookingDate || booking.checkIn).toLocaleDateString()}
             </div>
@@ -239,32 +239,32 @@ async function initHotelVoucherView(queryParams) {
               <strong>Due Date:</strong> ${new Date(booking.bookingDate || booking.checkIn).toLocaleDateString()}
             </div>
             <div>
-              <strong>GSTIN:</strong> <span style="color: var(--accent-purple); font-weight: 700;">12ABCDE1234F</span>
+              <strong>GSTIN:</strong> <span class="gst-tag">12ABCDE1234F</span>
             </div>
           </div>
 
           <!-- Invoice Details Table -->
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; line-height: 1.4;">
+          <table class="invoice-table">
             <thead>
-              <tr style="background: var(--primary-gradient); color: #ffffff;">
-                <th style="text-align: left; padding: 6px 10px; border-radius: 4px 0 0 4px; font-weight: 700; border: none;">Product Description</th>
-                <th style="text-align: center; padding: 6px 10px; font-weight: 700; width: 15%; border: none;">Qty</th>
-                <th style="text-align: right; padding: 6px 10px; font-weight: 700; width: 20%; border: none;">Rate</th>
-                <th style="text-align: right; padding: 6px 10px; border-radius: 0 4px 4px 0; font-weight: 700; width: 20%; border: none;">Total</th>
+              <tr>
+                <th>Product Description</th>
+                <th style="text-align: center; width: 15%;">Qty</th>
+                <th style="text-align: right; width: 20%;">Rate</th>
+                <th style="text-align: right; width: 20%;">Total</th>
               </tr>
             </thead>
             <tbody>
-              <tr style="border-bottom: 1.5px solid var(--glass-border);">
-                <td style="padding: 12px 10px; font-weight: 600; color: var(--text-primary);">
+              <tr>
+                <td class="prod-desc">
                   Hotel Stay: ${booking.hotelName} (${booking.roomType})
                 </td>
-                <td style="padding: 12px 10px; text-align: center; color: var(--text-secondary);">
+                <td style="text-align: center;">
                   ${numNights} Night(s)
                 </td>
-                <td style="padding: 12px 10px; text-align: right; color: var(--text-secondary);">
+                <td style="text-align: right;">
                   ₹${(booking.billing.baseFare / numNights).toFixed(0)}
                 </td>
-                <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: var(--text-primary);">
+                <td class="prod-total" style="text-align: right;">
                   ₹${booking.billing.baseFare}
                 </td>
               </tr>
@@ -272,10 +272,10 @@ async function initHotelVoucherView(queryParams) {
           </table>
 
           <!-- Bank Pay Details & Totals -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; line-height: 1.4; color: var(--text-secondary); margin-bottom: 25px;">
+          <div class="invoice-footer-grid">
             <div>
-              <h4 style="color: var(--text-primary); font-size: 11px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase;">Pay To</h4>
-              <p style="margin: 0; color: var(--text-secondary);">
+              <h4>Pay To</h4>
+              <p style="margin: 0;">
                 Bank Name: Center Bank<br>
                 Account Holder: Pack Your Bags Pvt. Ltd.<br>
                 Account No: XXXXXXXXXX<br>
@@ -283,22 +283,22 @@ async function initHotelVoucherView(queryParams) {
               </p>
             </div>
             <div style="text-align: right;">
-              <table style="width: 100%; border-collapse: collapse;">
+              <table class="invoice-totals-table">
                 <tr>
-                  <td style="text-align: left; padding: 2px 0; color: var(--text-secondary);">SUB TOTAL (Tax Inc):</td>
-                  <td style="text-align: right; padding: 2px 0; font-weight: 700; color: var(--text-primary);">₹${booking.billing.grandTotal}</td>
+                  <td style="text-align: left; padding: 2px 0;">SUB TOTAL (Tax Inc):</td>
+                  <td style="text-align: right; padding: 2px 0; font-weight: 700;">₹${booking.billing.grandTotal}</td>
                 </tr>
                 <tr>
-                  <td style="text-align: left; padding: 2px 0; color: var(--text-secondary);">GST (18% inclusive):</td>
-                  <td style="text-align: right; padding: 2px 0; font-weight: 700; color: var(--text-primary);">₹${booking.billing.gst}</td>
+                  <td style="text-align: left; padding: 2px 0;">GST (18% inclusive):</td>
+                  <td style="text-align: right; padding: 2px 0; font-weight: 700;">₹${booking.billing.gst}</td>
                 </tr>
-                <tr style="border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
-                  <td style="text-align: left; padding: 6px 0; font-weight: 800; color: var(--text-primary);">TOTAL:</td>
-                  <td style="text-align: right; padding: 6px 0; font-weight: 800; color: var(--accent-purple); font-size: 14px;">₹${booking.billing.grandTotal}</td>
+                <tr class="total-row">
+                  <td style="text-align: left;">TOTAL:</td>
+                  <td class="total-val" style="text-align: right;">₹${booking.billing.grandTotal}</td>
                 </tr>
                 <tr>
                   <td colspan="2" style="padding: 6px 0 0 0;">
-                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); padding: 5px 8px; border-radius: 4px; display: flex; justify-content: space-between; font-weight: 800; color: var(--text-primary);">
+                    <div class="invoice-balance-box">
                       <span>Balance Due:</span>
                       <span>₹0</span>
                     </div>
@@ -309,8 +309,8 @@ async function initHotelVoucherView(queryParams) {
           </div>
 
           <!-- Bottom compliance tagline -->
-          <div style="text-align: center; border-top: 1px solid var(--glass-border); padding-top: 12px; font-size: 10px; color: var(--text-secondary);">
-            <p style="margin: 0 0 2px 0; font-weight: 700; color: var(--text-primary);">Please pay within 30 days of invoice date.</p>
+          <div class="invoice-bottom-compliance">
+            <p class="pay-tag">Please pay within 30 days of invoice date.</p>
             <p style="margin: 0;">It was wonderful doing business with you. Thank you!</p>
           </div>
 
