@@ -255,10 +255,17 @@ async function initMyTripsView() {
 
   const todayStr = new Date().toISOString().split("T")[0];
 
-  // Categorize bookings
-  const upcoming = bookings.filter((b) => b.status === "Confirmed" && b.date >= todayStr);
-  const past = bookings.filter((b) => b.status === "Confirmed" && b.date < todayStr);
-  const cancelled = bookings.filter((b) => b.status === "Cancelled");
+  // Categorize transport bookings
+  const transportBookings = bookings.filter(b => b.bookingType !== 'hotel');
+  const tUpcoming = transportBookings.filter((b) => b.status === "Confirmed" && b.date >= todayStr);
+  const tPast = transportBookings.filter((b) => b.status === "Confirmed" && b.date < todayStr);
+  const tCancelled = transportBookings.filter((b) => b.status === "Cancelled");
+
+  // Categorize hotel bookings
+  const hotelBookings = bookings.filter(b => b.bookingType === 'hotel');
+  const hUpcoming = hotelBookings.filter((b) => b.status === "Confirmed" && b.checkIn >= todayStr);
+  const hPast = hotelBookings.filter((b) => b.status === "Confirmed" && b.checkIn < todayStr);
+  const hCancelled = hotelBookings.filter((b) => b.status === "Cancelled");
 
   renderMyTripsUI();
   bindMyTripsEvents();
@@ -268,27 +275,52 @@ async function initMyTripsView() {
       <div class="my-trips-page container">
         <h2 class="page-title">My Journeys</h2>
         
-        <div class="trips-tabs-wrapper">
-          <div class="trips-tabs">
-            <button class="trips-tab active" data-target="upcoming-trips-list">Upcoming Trips (${upcoming.length})</button>
-            <button class="trips-tab" data-target="completed-trips-list">Completed Trips (${past.length})</button>
-            <button class="trips-tab" data-target="cancelled-trips-list">Cancelled (${cancelled.length})</button>
+        <!-- Segment selector between Transport Bookings and Hotel Stays -->
+        <div class="trips-main-selector" style="display: flex; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 4px; margin-bottom: 24px; max-width: 480px;">
+          <button class="main-segment-btn active" data-segment="transport">✈️ Transport Bookings</button>
+          <button class="main-segment-btn" data-segment="stays">🏨 Hotel Stays</button>
+        </div>
+
+        <!-- 1. Transport Segment Wrapper -->
+        <div id="transport-segment-wrapper" class="segment-wrapper">
+          <div class="trips-tabs-wrapper">
+            <div class="trips-tabs">
+              <button class="trips-tab active" data-target="t-upcoming-list">Upcoming Rides (${tUpcoming.length})</button>
+              <button class="trips-tab" data-target="t-completed-list">Completed Rides (${tPast.length})</button>
+              <button class="trips-tab" data-target="t-cancelled-list">Cancelled (${tCancelled.length})</button>
+            </div>
+          </div>
+
+          <div class="trips-content-panel" id="t-upcoming-list">
+            ${tUpcoming.length === 0 ? renderEmptyTripsState("No upcoming transport rides.", "transport") : tUpcoming.map((b) => renderTripCard(b, true)).join("")}
+          </div>
+          <div class="trips-content-panel" id="t-completed-list" style="display:none;">
+            ${tPast.length === 0 ? renderEmptyTripsState("No completed transport rides found.", "transport") : tPast.map((b) => renderTripCard(b, false)).join("")}
+          </div>
+          <div class="trips-content-panel" id="t-cancelled-list" style="display:none;">
+            ${tCancelled.length === 0 ? renderEmptyTripsState("No cancelled transport bookings.", "transport") : tCancelled.map((b) => renderTripCard(b, false)).join("")}
           </div>
         </div>
 
-        <!-- Upcoming Trips -->
-        <div class="trips-content-panel" id="upcoming-trips-list">
-          ${upcoming.length === 0 ? renderEmptyTripsState("No upcoming trips booked.") : upcoming.map((b) => renderTripCard(b, true)).join("")}
-        </div>
+        <!-- 2. Stays Segment Wrapper -->
+        <div id="stays-segment-wrapper" class="segment-wrapper" style="display:none;">
+          <div class="trips-tabs-wrapper">
+            <div class="trips-tabs">
+              <button class="trips-tab active" data-target="h-upcoming-list">Upcoming Stays (${hUpcoming.length})</button>
+              <button class="trips-tab" data-target="h-completed-list">Completed Stays (${hPast.length})</button>
+              <button class="trips-tab" data-target="h-cancelled-list">Cancelled (${hCancelled.length})</button>
+            </div>
+          </div>
 
-        <!-- Completed Trips -->
-        <div class="trips-content-panel" id="completed-trips-list" style="display:none;">
-          ${past.length === 0 ? renderEmptyTripsState("No past trips found.") : past.map((b) => renderTripCard(b, false)).join("")}
-        </div>
-
-        <!-- Cancelled Trips -->
-        <div class="trips-content-panel" id="cancelled-trips-list" style="display:none;">
-          ${cancelled.length === 0 ? renderEmptyTripsState("No cancelled trips.") : cancelled.map((b) => renderTripCard(b, false)).join("")}
+          <div class="trips-content-panel" id="h-upcoming-list">
+            ${hUpcoming.length === 0 ? renderEmptyTripsState("No upcoming hotel stays.", "stays") : hUpcoming.map((b) => renderTripCard(b, true)).join("")}
+          </div>
+          <div class="trips-content-panel" id="h-completed-list" style="display:none;">
+            ${hPast.length === 0 ? renderEmptyTripsState("No past hotel stays found.", "stays") : hPast.map((b) => renderTripCard(b, false)).join("")}
+          </div>
+          <div class="trips-content-panel" id="h-cancelled-list" style="display:none;">
+            ${hCancelled.length === 0 ? renderEmptyTripsState("No cancelled stays.", "stays") : hCancelled.map((b) => renderTripCard(b, false)).join("")}
+          </div>
         </div>
       </div>
 
@@ -312,13 +344,16 @@ async function initMyTripsView() {
     `;
   }
 
-  function renderEmptyTripsState(message) {
+  function renderEmptyTripsState(message, type) {
+    const icon = type === "stays" ? "🏨" : "✈️";
+    const actionHash = type === "stays" ? "#/hotels" : "#/";
+    const actionText = type === "stays" ? "Book a Stay" : "Plan a Trip";
     return `
       <div class="empty-trips-card card text-center">
-        <span class="empty-icon">🎒</span>
+        <span class="empty-icon">${icon}</span>
         <h3>${message}</h3>
-        <p>Start exploring flights, trains, and bus rides now.</p>
-        <a href="#/" class="btn btn-primary">Plan a Trip</a>
+        <p>Explore options and reserve yours now.</p>
+        <a href="${actionHash}" class="btn btn-primary">${actionText}</a>
       </div>
     `;
   }
@@ -434,22 +469,55 @@ async function initMyTripsView() {
   }
 
   function bindMyTripsEvents() {
-    // Tabs clicking
-    const tabs = document.querySelectorAll(".trips-tab");
-    tabs.forEach((tab) => {
+    // 1. Main segment buttons click
+    const segmentBtns = document.querySelectorAll(".main-segment-btn");
+    segmentBtns.forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        segmentBtns.forEach(b => b.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+
+        const targetSegment = e.currentTarget.getAttribute("data-segment");
+        if (targetSegment === "transport") {
+          document.getElementById("transport-segment-wrapper").style.display = "block";
+          document.getElementById("stays-segment-wrapper").style.display = "none";
+        } else {
+          document.getElementById("transport-segment-wrapper").style.display = "none";
+          document.getElementById("stays-segment-wrapper").style.display = "block";
+        }
+      });
+    });
+
+    // 2. Subtabs click for Transport
+    const transportTabs = document.querySelectorAll("#transport-segment-wrapper .trips-tab");
+    transportTabs.forEach((tab) => {
       tab.addEventListener("click", (e) => {
-        tabs.forEach((t) => t.classList.remove("active"));
+        transportTabs.forEach((t) => t.classList.remove("active"));
         e.currentTarget.classList.add("active");
 
         const targetId = e.currentTarget.getAttribute("data-target");
-        document.querySelectorAll(".trips-content-panel").forEach((panel) => {
+        document.querySelectorAll("#transport-segment-wrapper .trips-content-panel").forEach((panel) => {
           panel.style.display = "none";
         });
         document.getElementById(targetId).style.display = "block";
       });
     });
 
-    // Cancellation modals triggering
+    // 3. Subtabs click for Stays
+    const staysTabs = document.querySelectorAll("#stays-segment-wrapper .trips-tab");
+    staysTabs.forEach((tab) => {
+      tab.addEventListener("click", (e) => {
+        staysTabs.forEach((t) => t.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+
+        const targetId = e.currentTarget.getAttribute("data-target");
+        document.querySelectorAll("#stays-segment-wrapper .trips-content-panel").forEach((panel) => {
+          panel.style.display = "none";
+        });
+        document.getElementById(targetId).style.display = "block";
+      });
+    });
+
+    // 4. Cancellation modals triggering
     let selectedBookingId = null;
     let selectedBookingRefund = 0;
 

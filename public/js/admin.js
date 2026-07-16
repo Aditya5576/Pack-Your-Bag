@@ -1,4 +1,5 @@
 // admin.js - Admin Dashboard & Route Scheduler module
+// TODO: Restrict access to the Admin Dashboard (initAdminView) to authorized administrator role accounts only (implement role checks in auth.js)
 
 // Renders the main administration panel views
 async function initAdminView() {
