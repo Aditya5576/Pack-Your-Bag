@@ -136,7 +136,22 @@ window.handleLoginSubmit = async function (e) {
   let loginSuccess = false;
   let userDetails = null;
 
-  if (window.useSupabase && window.supabaseClient) {
+  // 1. Check local database FIRST for instant login
+  const db = getDB();
+  const matchedUser = (db.users || []).find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+  if (matchedUser) {
+    userDetails = {
+      name: matchedUser.name,
+      age: matchedUser.age || 24,
+      gender: matchedUser.gender || "Male",
+      email: matchedUser.email,
+      mobile: matchedUser.mobile || "9876543210"
+    };
+    loginSuccess = true;
+  }
+
+  // 2. If not found locally, try Supabase
+  if (!loginSuccess && window.useSupabase && window.supabaseClient) {
     try {
       const { data, error } = await window.supabaseClient.auth.signInWithPassword({
         email: email,
@@ -154,25 +169,25 @@ window.handleLoginSubmit = async function (e) {
           mobile: meta.phone || "9876543210"
         };
         loginSuccess = true;
+
+        // Auto-sync back to local DB so they exist locally for subsequent visits
+        const localDb = getDB();
+        localDb.users = localDb.users || [];
+        if (!localDb.users.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
+          localDb.users.push({
+            id: "usr-" + Math.floor(Math.random() * 1000000),
+            name: userDetails.name,
+            age: userDetails.age,
+            gender: userDetails.gender,
+            mobile: userDetails.mobile,
+            email: userDetails.email,
+            password: password
+          });
+          saveDB(localDb);
+        }
       }
     } catch (err) {
       console.warn("Supabase login warning: ", err.message);
-    }
-  }
-
-  // Fallback to local DB check if Supabase login failed or is pending
-  if (!loginSuccess) {
-    const db = getDB();
-    const matchedUser = (db.users || []).find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-    if (matchedUser) {
-      userDetails = {
-        name: matchedUser.name,
-        age: matchedUser.age || 24,
-        gender: matchedUser.gender || "Male",
-        email: matchedUser.email,
-        mobile: matchedUser.mobile || "9876543210"
-      };
-      loginSuccess = true;
     }
   }
 
