@@ -1426,9 +1426,7 @@
     margin: 0 !important;
   }
   .ticket-card {
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
+    display: none !important;
   }
   .ticket-header {
     background: #000000 !important;
@@ -1461,8 +1459,8 @@
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    margin: 20px 0 0 0 !important;
-    page-break-before: always; /* Force start on page 2 */
+    margin: 0 !important;
+    page-break-before: auto !important; /* Start on page 1 since ticket is hidden */
     font-family: 'Plus Jakarta Sans', sans-serif !important;
   }
 
