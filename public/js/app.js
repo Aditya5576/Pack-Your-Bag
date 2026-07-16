@@ -37,6 +37,13 @@ const routes = {
 
 // Initialize Application on DOM Content Loaded
 document.addEventListener("DOMContentLoaded", async () => {
+  if (window.supabaseInitPromise) {
+    try {
+      await window.supabaseInitPromise;
+    } catch (e) {
+      console.error("Failed to wait for Supabase init promise: ", e);
+    }
+  }
   await initAppState();
   window.addEventListener("hashchange", router);
   router(); // Run router for initial load
@@ -148,7 +155,7 @@ async function initAppState() {
     };
   }
 
-  // Inspect if Supabase has a real (non-anonymous) GitHub user logged in
+  // Inspect if Supabase has an active session
   if (window.useSupabase && window.supabaseClient) {
     try {
       const { data } = await window.supabaseClient.auth.getSession();
@@ -157,9 +164,15 @@ async function initAppState() {
         const isAnon = user.is_anonymous || !user.identities || user.identities.length === 0;
         if (!isAnon) {
           const meta = user.user_metadata || {};
-          window.appState.currentUser.name = meta.full_name || meta.user_name || "GitHub Traveler";
-          window.appState.currentUser.email = user.email || "aditya@example.com";
-          console.log("Supabase: Active GitHub user loaded: ", window.appState.currentUser.name);
+          window.appState.currentUser = {
+            name: meta.full_name || meta.user_name || "Traveler",
+            email: user.email || "traveler@example.com",
+            age: meta.age || 24,
+            gender: meta.gender || "Male",
+            mobile: meta.phone || "9876543210",
+            savedPassengers: savedPassengers || []
+          };
+          localStorage.setItem("ACTIVE_SESSION_EMAIL", user.email);
         }
       }
     } catch (err) {

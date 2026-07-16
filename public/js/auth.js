@@ -133,6 +133,9 @@ window.handleLoginSubmit = async function (e) {
   const email = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value;
 
+  let loginSuccess = false;
+  let userDetails = null;
+
   if (window.useSupabase && window.supabaseClient) {
     try {
       const { data, error } = await window.supabaseClient.auth.signInWithPassword({
@@ -140,53 +143,46 @@ window.handleLoginSubmit = async function (e) {
         password: password
       });
 
-      if (error) throw error;
-
-      // Extract user metadata
-      const user = data.user;
-      const meta = user.user_metadata || {};
-      window.appState.currentUser = {
-        name: meta.full_name || "Traveler",
-        age: meta.age || 24,
-        gender: meta.gender || "Male",
-        email: user.email,
-        mobile: meta.phone || "9876543210",
-        savedPassengers: []
-      };
-
-      // Set active session token in localStorage
-      localStorage.setItem("ACTIVE_SESSION_EMAIL", user.email);
-
-      showNotification(`Welcome back, ${window.appState.currentUser.name}!`, "success");
-      
-      // Update Navigation & redirect
-      await initAppState();
-      window.location.hash = "#/";
-      return;
+      if (!error && data.user) {
+        const user = data.user;
+        const meta = user.user_metadata || {};
+        userDetails = {
+          name: meta.full_name || "Traveler",
+          age: meta.age || 24,
+          gender: meta.gender || "Male",
+          email: user.email,
+          mobile: meta.phone || "9876543210"
+        };
+        loginSuccess = true;
+      }
     } catch (err) {
-      console.error("Supabase sign in error: ", err);
-      showNotification("Login failed: " + err.message, "error");
-      return;
+      console.warn("Supabase login warning: ", err.message);
     }
   }
 
-  // Fallback: LocalStorage Authentication
-  const db = getDB();
-  const users = db.users || [];
-  const matchedUser = users.find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+  // Fallback to local DB check if Supabase login failed or is pending
+  if (!loginSuccess) {
+    const db = getDB();
+    const matchedUser = (db.users || []).find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+    if (matchedUser) {
+      userDetails = {
+        name: matchedUser.name,
+        age: matchedUser.age || 24,
+        gender: matchedUser.gender || "Male",
+        email: matchedUser.email,
+        mobile: matchedUser.mobile || "9876543210"
+      };
+      loginSuccess = true;
+    }
+  }
 
-  if (matchedUser) {
+  if (loginSuccess && userDetails) {
     window.appState.currentUser = {
-      name: matchedUser.name,
-      age: matchedUser.age || 24,
-      gender: matchedUser.gender || "Male",
-      email: matchedUser.email,
-      mobile: matchedUser.mobile || "9876543210",
+      ...userDetails,
       savedPassengers: []
     };
-
-    localStorage.setItem("ACTIVE_SESSION_EMAIL", matchedUser.email);
-    showNotification(`Logged in successfully! Welcome, ${matchedUser.name}!`, "success");
+    localStorage.setItem("ACTIVE_SESSION_EMAIL", userDetails.email);
+    showNotification(`Logged in successfully! Welcome, ${userDetails.name}!`, "success");
 
     await initAppState();
     window.location.hash = "#/";
@@ -211,48 +207,7 @@ window.handleSignUpSubmit = async function (e) {
     return;
   }
 
-  if (window.useSupabase && window.supabaseClient) {
-    try {
-      const { data, error } = await window.supabaseClient.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {
-            full_name: name,
-            age: age,
-            gender: gender,
-            phone: mobile
-          }
-        }
-      });
-
-      if (error) throw error;
-
-      showNotification("Registration successful! Check email verification.", "success");
-      
-      // Auto login
-      const user = data.user;
-      window.appState.currentUser = {
-        name: name,
-        age: age,
-        gender: gender,
-        email: email,
-        mobile: mobile,
-        savedPassengers: []
-      };
-      localStorage.setItem("ACTIVE_SESSION_EMAIL", email);
-
-      await initAppState();
-      window.location.hash = "#/";
-      return;
-    } catch (err) {
-      console.error("Supabase sign up error: ", err);
-      showNotification("Registration failed: " + err.message, "error");
-      return;
-    }
-  }
-
-  // Fallback: LocalStorage Registration
+  // 1. Always seed locally first to ensure instant validation and local session recovery
   const db = getDB();
   db.users = db.users || [];
 
@@ -273,6 +228,27 @@ window.handleSignUpSubmit = async function (e) {
 
   db.users.push(newUser);
   saveDB(db);
+
+  // 2. Synchronize to Supabase in the background
+  if (window.useSupabase && window.supabaseClient) {
+    try {
+      const { data, error } = await window.supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            full_name: name,
+            age: age,
+            gender: gender,
+            phone: mobile
+          }
+        }
+      });
+      if (error) console.warn("Supabase signUp warning: ", error.message);
+    } catch (err) {
+      console.warn("Supabase background registration failed: ", err.message);
+    }
+  }
 
   window.appState.currentUser = {
     name: name,

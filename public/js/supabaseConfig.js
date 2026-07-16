@@ -46,7 +46,7 @@ window.signOutUser = async function () {
 };
 
 // Initialize Supabase Client if keys are provided
-(async function initSupabase() {
+window.supabaseInitPromise = (async function initSupabase() {
   if (
     window.SUPABASE_URL &&
     window.SUPABASE_URL !== "YOUR_SUPABASE_PROJECT_URL" &&
