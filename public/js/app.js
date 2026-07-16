@@ -115,15 +115,28 @@ async function initAppState() {
     console.error("Failed to load passengers on boot: ", err);
   }
 
-  // Default logged in user details
-  window.appState.currentUser = {
-    name: "Aditya Patil",
-    age: 24,
-    gender: "Male",
-    email: "aditya@example.com",
-    mobile: "9876543210",
-    savedPassengers: savedPassengers || []
-  };
+  // Load from LocalStorage if saved previously, else default to default settings
+  const localProfile = localStorage.getItem("USER_PROFILE");
+  if (localProfile) {
+    try {
+      window.appState.currentUser = JSON.parse(localProfile);
+      // Ensure savedPassengers is up to date with the DB
+      window.appState.currentUser.savedPassengers = savedPassengers || [];
+    } catch (e) {
+      console.error("Failed to parse local USER_PROFILE: ", e);
+    }
+  }
+
+  if (!window.appState.currentUser) {
+    window.appState.currentUser = {
+      name: "Aditya Patil",
+      age: 24,
+      gender: "Male",
+      email: "aditya@example.com",
+      mobile: "9876543210",
+      savedPassengers: savedPassengers || []
+    };
+  }
 
   // Inspect if Supabase has a real (non-anonymous) GitHub user logged in
   if (window.useSupabase && window.supabaseClient) {

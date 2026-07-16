@@ -16,17 +16,23 @@ async function initProfileView() {
   bindProfileEvents(saved);
 
   function renderProfileUI(saved) {
+    const nameParts = state.currentUser.name.split(" ");
+    const initials = nameParts.map(n => n[0] || "").join("").toUpperCase().slice(0, 2) || "U";
     appView.innerHTML = `
       <div class="profile-page-container container">
         <div class="profile-layout-grid">
           <!-- Profile info card -->
           <div class="card profile-info-card">
-            <div class="avatar-large">AP</div>
+            <div class="avatar-large">${initials}</div>
             <h3>${state.currentUser.name}</h3>
             <p class="text-muted">Traveler since 2026</p>
             <hr>
             
             <form id="edit-profile-form">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="prof-name" class="form-control" value="${state.currentUser.name}" required>
+              </div>
               <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" id="prof-email" class="form-control" value="${state.currentUser.email}" required>
@@ -131,15 +137,20 @@ async function initProfileView() {
     const cancelAddBtn = document.getElementById("btn-cancel-pax-add");
 
     // Save Profile modifications
-    editForm.addEventListener("submit", (e) => {
+    editForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const nameVal = document.getElementById("prof-name").value.trim();
       const emailVal = document.getElementById("prof-email").value.trim();
       const mobileVal = document.getElementById("prof-mobile").value.trim();
 
+      state.currentUser.name = nameVal;
       state.currentUser.email = emailVal;
       state.currentUser.mobile = mobileVal;
 
+      localStorage.setItem("USER_PROFILE", JSON.stringify(state.currentUser));
+
       showNotification("Profile details saved successfully!", "success");
+      await initProfileView(); // Re-render to update initials avatar & h3 headers
     });
 
     // Save Resend API settings

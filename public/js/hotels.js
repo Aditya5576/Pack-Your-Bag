@@ -159,7 +159,7 @@ function bindHotelsListingEvents(hotels, numNights) {
     grid.innerHTML = filtered
       .map(
         (h) => `
-      <div class="card trip-result-card">
+      <div class="card trip-result-card hotel-result-card">
         <div class="trip-card-main" style="align-items: stretch;">
           <!-- Hotel Image Thumbnail -->
           <div class="col-provider" style="flex: 0 0 160px; min-width: 160px; height: 120px; border-radius: var(--radius-sm); overflow: hidden; position: relative;">

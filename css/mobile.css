@@ -981,20 +981,20 @@ html {
    ============================================= */
 @media (max-width: 768px) {
   /* --- Stays Results & Listing Cards --- */
-  .trip-result-card .trip-card-main {
+  .hotel-result-card .trip-card-main {
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 14px !important;
   }
   
-  .trip-result-card .col-provider {
+  .hotel-result-card .col-provider {
     width: 100% !important;
     min-width: 0 !important;
     flex: none !important;
     height: 180px !important;
   }
   
-  .trip-result-card .col-price-action {
+  .hotel-result-card .col-price-action {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
@@ -1005,13 +1005,72 @@ html {
     padding-top: 12px;
   }
 
-  .trip-result-card .col-price-action .price-section {
+  .hotel-result-card .col-price-action .price-section {
     text-align: left !important;
   }
 
-  .trip-result-card .col-price-action .btn {
+  .hotel-result-card .col-price-action .btn {
     width: auto !important;
     min-height: 40px !important;
+  }
+
+  /* --- Compact Travel Booking Cards (Bus, Train, Flight) --- */
+  .trip-result-card:not(.hotel-result-card) {
+    padding: 12px 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .trip-result-card:not(.hotel-result-card) .trip-card-main {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  .trip-result-card:not(.hotel-result-card) .col-provider {
+    width: 48% !important;
+    flex: unset !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .trip-result-card:not(.hotel-result-card) .col-timings {
+    width: 48% !important;
+    flex: unset !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    text-align: right !important;
+    margin-bottom: 0 !important;
+  }
+
+  .trip-result-card:not(.hotel-result-card) .col-timings .duration-path {
+    display: none !important; /* Hide path line on compact mobile list */
+  }
+
+  .trip-result-card:not(.hotel-result-card) .col-price-action {
+    width: 100% !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-top: 8px !important;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08) !important;
+    padding-top: 8px !important;
+  }
+
+  .trip-result-card:not(.hotel-result-card) .col-price-action .price-section {
+    text-align: left !important;
+    margin-bottom: 0 !important;
+  }
+
+  .trip-result-card:not(.hotel-result-card) .col-price-action .btn {
+    width: auto !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    padding: 0 16px !important;
   }
 
   /* --- Hotel Room Selection Modal Room Listings --- */

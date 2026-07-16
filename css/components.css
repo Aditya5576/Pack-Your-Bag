@@ -2,8 +2,10 @@
 
 /* --- LANDING PAGE / HOME VIEW STYLES --- */
 .hero-banner {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.2) 0%, rgba(124, 58, 237, 0.1) 100%);
-  padding: 60px 0 100px 0;
+  background: linear-gradient(180deg, rgba(11, 15, 25, 0.4) 0%, rgba(11, 15, 25, 0.85) 100%),
+              url('/images/hero_travel_banner.png') no-repeat center center;
+  background-size: cover;
+  padding: 85px 0 115px 0;
   text-align: center;
   position: relative;
   overflow: hidden;

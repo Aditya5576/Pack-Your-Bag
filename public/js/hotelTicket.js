@@ -51,7 +51,18 @@ async function initHotelVoucherView(queryParams) {
           <div class="ticket-header" style="background: linear-gradient(rgba(5, 8, 16, 0.4), rgba(5, 8, 16, 0.75)), url('${booking.photo || ''}'); background-size: cover; background-position: center; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; border-radius: var(--radius-md) var(--radius-md) 0 0; border-bottom: 2px solid var(--accent-teal);">
             <div style="display: flex; justify-content: space-between; width: 100%;">
               <div class="ticket-brand" style="font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.6); display: flex; align-items: center; gap: 6px;">
-                <span>🎒</span> Pack Your Bags Stays
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px;">
+                  <path d="M10 6C10 4.34315 11.3431 3 13 3H19C20.6569 3 22 4.34315 22 6V8H26C27.6569 8 29 9.34315 29 11V25C29 27.2091 27.2091 29 25 29H7C4.79086 29 3 27.2091 3 25V11C3 9.34315 4.34315 8 6 8H10V6ZM12 6V8H20V6C20 5.44772 19.5523 5 19 5H13C12.4477 5 12 5.44772 12 6ZM8 12C7.44772 12 7 12.4477 7 13V24C7 24.5523 7.44772 25 8 25C8.55228 25 9 24.5523 9 24V13C9 12.4477 8.55228 12 8 12ZM24 12C23.4477 12 23 12.4477 23 13V24C23 24.5523 23.4477 25 24 25C24.5523 25 25 24.5523 25 24V13C25 12.4477 24.5523 12 24 12Z" fill="url(#hotel-logo-grad)" />
+                  <path d="M16 11C13.2386 11 11 13.2386 11 16C11 18.7614 13.2386 21 16 21C18.7614 21 21 18.7614 21 16C21 13.2386 18.7614 11 16 11ZM16 19.5C14.067 19.5 12.5 17.933 12.5 16C12.5 14.067 14.067 12.5 16 12.5C17.933 12.5 19.5 14.067 19.5 16C19.5 17.933 17.933 19.5 16 19.5Z" fill="url(#hotel-logo-grad)" />
+                  <path d="M5 23C10 21 22 21 27 23" stroke="url(#hotel-logo-grad)" stroke-width="2" stroke-linecap="round" />
+                  <defs>
+                    <linearGradient id="hotel-logo-grad" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#00f2fe" />
+                      <stop offset="1" stop-color="#4facfe" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <span>Pack Your Bags Stays</span>
               </div>
               <span class="ticket-type-badge" style="background: var(--accent-teal); color: var(--bg-primary); font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-shadow: none;">
                 ${booking.platform.toUpperCase()} CONFIRMED
