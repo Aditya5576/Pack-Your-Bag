@@ -189,11 +189,11 @@ async function initHotelVoucherView(queryParams) {
         </main>
 
         <!-- Retail Invoice Receipt Card (Customized PDF Template style) -->
-        <aside class="invoice-card retail-invoice-container" id="printable-retail-invoice" style="background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; border-radius: var(--radius-md); font-family: 'Plus Jakarta Sans', sans-serif; position: relative; overflow: hidden; padding: 25px; box-shadow: var(--shadow-md);">
+        <aside class="invoice-card retail-invoice-container" id="printable-retail-invoice" style="background: var(--panel-bg); color: var(--text-primary); border: 1px solid var(--glass-border); border-radius: var(--radius-md); font-family: 'Plus Jakarta Sans', sans-serif; position: relative; overflow: hidden; padding: 25px; box-shadow: var(--shadow-md);">
           <!-- Elegant Wave Lines (Top Right decoration) -->
-          <svg class="invoice-wave-lines" width="300" height="150" viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; right: 0; opacity: 0.85; pointer-events: none;">
-            <path d="M10 140 C 90 60, 200 100, 290 10" stroke="#fca5a5" stroke-width="2" stroke-linecap="round" />
-            <path d="M40 140 C 110 70, 220 110, 300 30" stroke="#fed7aa" stroke-width="1.5" stroke-linecap="round" />
+          <svg class="invoice-wave-lines" width="300" height="150" viewBox="0 0 300 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; right: 0; opacity: 0.15; pointer-events: none;">
+            <path d="M10 140 C 90 60, 200 100, 290 10" stroke="var(--accent-purple)" stroke-width="2" stroke-linecap="round" />
+            <path d="M40 140 C 110 70, 220 110, 300 30" stroke="var(--accent-teal)" stroke-width="1.5" stroke-linecap="round" />
           </svg>
 
           <!-- Header Section -->
@@ -201,37 +201,37 @@ async function initHotelVoucherView(queryParams) {
             <!-- Ticket Brand Stamp SVG -->
             <div>
               <svg width="150" height="90" viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 20 C 10 15, 15 10, 20 10 L 200 10 C 205 10, 210 15, 210 20 L 210 50 C 200 50, 200 60, 210 60 L 210 90 C 200 90, 200 100, 210 100 L 210 130 C 210 135, 205 140, 200 140 L 20 140 C 15 140, 10 135, 10 130 L 10 100 C 20 100, 20 90, 10 90 L 10 60 C 20 60, 20 50, 10 50 Z" fill="#f8fafc" stroke="#475569" stroke-width="4" stroke-dasharray="6,4"/>
-                <text x="110" y="60" font-family="'Outfit', sans-serif" font-weight="900" font-size="26" fill="#0f172a" text-anchor="middle">PACK YOUR</text>
-                <text x="110" y="100" font-family="'Outfit', sans-serif" font-weight="900" font-size="34" fill="#0f172a" text-anchor="middle">BAGS</text>
+                <path d="M10 20 C 10 15, 15 10, 20 10 L 200 10 C 205 10, 210 15, 210 20 L 210 50 C 200 50, 200 60, 210 60 L 210 90 C 200 90, 200 100, 210 100 L 210 130 C 210 135, 205 140, 200 140 L 20 140 C 15 140, 10 135, 10 130 L 10 100 C 20 100, 20 90, 10 90 L 10 60 C 20 60, 20 50, 10 50 Z" fill="rgba(255, 255, 255, 0.02)" stroke="var(--glass-border)" stroke-width="4" stroke-dasharray="6,4"/>
+                <text x="110" y="60" font-family="'Outfit', sans-serif" font-weight="900" font-size="26" fill="var(--text-primary)" text-anchor="middle">PACK YOUR</text>
+                <text x="110" y="100" font-family="'Outfit', sans-serif" font-weight="900" font-size="34" fill="var(--text-primary)" text-anchor="middle">BAGS</text>
                 <path d="M170 105 L190 102 L182 118 L178 112 Z" fill="#ef4444"/>
                 <path d="M170 105 L178 112 L182 118 Z" fill="#dc2626"/>
               </svg>
             </div>
             <!-- Invoice Details -->
             <div style="text-align: right;">
-              <h1 style="color: #ea580c; font-size: 32px; font-weight: 800; margin: 0; letter-spacing: 1.5px;">INVOICE</h1>
-              <p style="font-size: 11px; color: #475569; margin: 4px 0 0 0; font-weight: 700;">Retail Invoice No: REC-${bookingId.split("-")[1] || bookingId}</p>
-              <p style="font-size: 11px; color: #ea580c; margin: 2px 0 0 0; font-weight: 700;">www.packyourbags.com</p>
+              <h1 style="color: var(--accent-purple); font-size: 32px; font-weight: 800; margin: 0; letter-spacing: 1.5px;">INVOICE</h1>
+              <p style="font-size: 11px; color: var(--text-secondary); margin: 4px 0 0 0; font-weight: 700;">Retail Invoice No: REC-${bookingId.split("-")[1] || bookingId}</p>
+              <p style="font-size: 11px; color: var(--accent-teal); margin: 2px 0 0 0; font-weight: 700;">www.packyourbags.com</p>
             </div>
           </div>
 
           <!-- Invoice Details Meta Grid -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; font-size: 12px; line-height: 1.4; color: #475569; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
             <div>
-              <h4 style="color: #0f172a; font-size: 12px; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">Bill To</h4>
-              <p style="font-weight: 700; color: #0f172a; margin: 0 0 2px 0;">${booking.passengers[0].name}</p>
-              <p style="margin: 0;">Plot No. 05, Block A,<br>Sector-132, Noida<br>201301</p>
+              <h4 style="color: var(--text-primary); font-size: 12px; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">Bill To</h4>
+              <p style="font-weight: 700; color: var(--text-primary); margin: 0 0 2px 0;">${booking.passengers[0].name}</p>
+              <p style="margin: 0;">Rankala Lake Road,<br>Kolhapur, Maharashtra<br>416012</p>
             </div>
             <div>
-              <h4 style="color: #0f172a; font-size: 12px; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">Company Name</h4>
-              <p style="font-weight: 700; color: #0f172a; margin: 0 0 2px 0;">Pack Your Bags Pvt. Ltd.</p>
+              <h4 style="color: var(--text-primary); font-size: 12px; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">Company Name</h4>
+              <p style="font-weight: 700; color: var(--text-primary); margin: 0 0 2px 0;">Pack Your Bags Pvt. Ltd.</p>
               <p style="margin: 0;">I-1A, Sector 25A,<br>Noida, 201301<br>Phone: +91 99999 99999</p>
             </div>
           </div>
 
           <!-- Dates & GST details -->
-          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569; margin-bottom: 25px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 25px;">
             <div>
               <strong>Invoice Date:</strong> ${new Date(booking.bookingDate || booking.checkIn).toLocaleDateString()}
             </div>
@@ -239,32 +239,32 @@ async function initHotelVoucherView(queryParams) {
               <strong>Due Date:</strong> ${new Date(booking.bookingDate || booking.checkIn).toLocaleDateString()}
             </div>
             <div>
-              <strong>GSTIN:</strong> <span style="color: #ea580c; font-weight: 700;">12ABCDE1234F</span>
+              <strong>GSTIN:</strong> <span style="color: var(--accent-purple); font-weight: 700;">12ABCDE1234F</span>
             </div>
           </div>
 
           <!-- Invoice Details Table -->
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; line-height: 1.4;">
             <thead>
-              <tr style="background: #0f172a; color: #ffffff;">
-                <th style="text-align: left; padding: 6px 10px; border-radius: 4px 0 0 4px; font-weight: 700;">Product Description</th>
-                <th style="text-align: center; padding: 6px 10px; font-weight: 700; width: 15%;">Qty</th>
-                <th style="text-align: right; padding: 6px 10px; font-weight: 700; width: 20%;">Rate</th>
-                <th style="text-align: right; padding: 6px 10px; border-radius: 0 4px 4px 0; font-weight: 700; width: 20%;">Total</th>
+              <tr style="background: var(--primary-gradient); color: #ffffff;">
+                <th style="text-align: left; padding: 6px 10px; border-radius: 4px 0 0 4px; font-weight: 700; border: none;">Product Description</th>
+                <th style="text-align: center; padding: 6px 10px; font-weight: 700; width: 15%; border: none;">Qty</th>
+                <th style="text-align: right; padding: 6px 10px; font-weight: 700; width: 20%; border: none;">Rate</th>
+                <th style="text-align: right; padding: 6px 10px; border-radius: 0 4px 4px 0; font-weight: 700; width: 20%; border: none;">Total</th>
               </tr>
             </thead>
             <tbody>
-              <tr style="border-bottom: 1.5px solid #0f172a;">
-                <td style="padding: 12px 10px; font-weight: 600; color: #0f172a;">
+              <tr style="border-bottom: 1.5px solid var(--glass-border);">
+                <td style="padding: 12px 10px; font-weight: 600; color: var(--text-primary);">
                   Hotel Stay: ${booking.hotelName} (${booking.roomType})
                 </td>
-                <td style="padding: 12px 10px; text-align: center; color: #334155;">
+                <td style="padding: 12px 10px; text-align: center; color: var(--text-secondary);">
                   ${numNights} Night(s)
                 </td>
-                <td style="padding: 12px 10px; text-align: right; color: #334155;">
+                <td style="padding: 12px 10px; text-align: right; color: var(--text-secondary);">
                   ₹${(booking.billing.baseFare / numNights).toFixed(0)}
                 </td>
-                <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: #0f172a;">
+                <td style="padding: 12px 10px; text-align: right; font-weight: 700; color: var(--text-primary);">
                   ₹${booking.billing.baseFare}
                 </td>
               </tr>
@@ -272,10 +272,10 @@ async function initHotelVoucherView(queryParams) {
           </table>
 
           <!-- Bank Pay Details & Totals -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; line-height: 1.4; color: #475569; margin-bottom: 25px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; line-height: 1.4; color: var(--text-secondary); margin-bottom: 25px;">
             <div>
-              <h4 style="color: #0f172a; font-size: 11px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase;">Pay To</h4>
-              <p style="margin: 0; color: #475569;">
+              <h4 style="color: var(--text-primary); font-size: 11px; font-weight: 800; margin: 0 0 4px 0; text-transform: uppercase;">Pay To</h4>
+              <p style="margin: 0; color: var(--text-secondary);">
                 Bank Name: Center Bank<br>
                 Account Holder: Pack Your Bags Pvt. Ltd.<br>
                 Account No: XXXXXXXXXX<br>
@@ -285,20 +285,20 @@ async function initHotelVoucherView(queryParams) {
             <div style="text-align: right;">
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                  <td style="text-align: left; padding: 2px 0; color: #64748b;">SUB TOTAL (Tax Inc):</td>
-                  <td style="text-align: right; padding: 2px 0; font-weight: 700; color: #0f172a;">₹${booking.billing.grandTotal}</td>
+                  <td style="text-align: left; padding: 2px 0; color: var(--text-secondary);">SUB TOTAL (Tax Inc):</td>
+                  <td style="text-align: right; padding: 2px 0; font-weight: 700; color: var(--text-primary);">₹${booking.billing.grandTotal}</td>
                 </tr>
                 <tr>
-                  <td style="text-align: left; padding: 2px 0; color: #64748b;">GST (18% inclusive):</td>
-                  <td style="text-align: right; padding: 2px 0; font-weight: 700; color: #0f172a;">₹${booking.billing.gst}</td>
+                  <td style="text-align: left; padding: 2px 0; color: var(--text-secondary);">GST (18% inclusive):</td>
+                  <td style="text-align: right; padding: 2px 0; font-weight: 700; color: var(--text-primary);">₹${booking.billing.gst}</td>
                 </tr>
-                <tr style="border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1;">
-                  <td style="text-align: left; padding: 6px 0; font-weight: 800; color: #0f172a;">TOTAL:</td>
-                  <td style="text-align: right; padding: 6px 0; font-weight: 800; color: #ea580c; font-size: 14px;">₹${booking.billing.grandTotal}</td>
+                <tr style="border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+                  <td style="text-align: left; padding: 6px 0; font-weight: 800; color: var(--text-primary);">TOTAL:</td>
+                  <td style="text-align: right; padding: 6px 0; font-weight: 800; color: var(--accent-purple); font-size: 14px;">₹${booking.billing.grandTotal}</td>
                 </tr>
                 <tr>
                   <td colspan="2" style="padding: 6px 0 0 0;">
-                    <div style="background: #f1f5f9; padding: 5px 8px; border-radius: 4px; display: flex; justify-content: space-between; font-weight: 800; color: #0f172a;">
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); padding: 5px 8px; border-radius: 4px; display: flex; justify-content: space-between; font-weight: 800; color: var(--text-primary);">
                       <span>Balance Due:</span>
                       <span>₹0</span>
                     </div>
@@ -309,8 +309,8 @@ async function initHotelVoucherView(queryParams) {
           </div>
 
           <!-- Bottom compliance tagline -->
-          <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; font-size: 10px; color: #64748b;">
-            <p style="margin: 0 0 2px 0; font-weight: 700; color: #0f172a;">Please pay within 30 days of invoice date.</p>
+          <div style="text-align: center; border-top: 1px solid var(--glass-border); padding-top: 12px; font-size: 10px; color: var(--text-secondary);">
+            <p style="margin: 0 0 2px 0; font-weight: 700; color: var(--text-primary);">Please pay within 30 days of invoice date.</p>
             <p style="margin: 0;">It was wonderful doing business with you. Thank you!</p>
           </div>
 
