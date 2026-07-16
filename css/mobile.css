@@ -1130,4 +1130,15 @@ html {
     text-align: left !important;
     width: 100% !important;
   }
+
+  /* My Trips segmented selector responsiveness */
+  .trips-main-selector {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 20px !important;
+  }
+  .main-segment-btn {
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+  }
 }
