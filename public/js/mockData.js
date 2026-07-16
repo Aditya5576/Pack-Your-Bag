@@ -481,6 +481,13 @@ window.dbAPI = {
       console.warn("Failed to load local bookings:", e);
     }
 
+    // Filter local bookings by currentUser's email if logged in
+    if (window.appState.currentUser) {
+      localBookings = localBookings.filter(b => b.user_id === window.appState.currentUser.email || b.email === window.appState.currentUser.email);
+    } else {
+      localBookings = localBookings.filter(b => !b.user_id);
+    }
+
     if (window.useSupabase) {
       try {
         // RLS automatically filters by auth.uid() = user_id on select
@@ -519,6 +526,9 @@ window.dbAPI = {
     // 1. Always save to LocalStorage first to ensure local durability
     const db = getDB();
     if (!db.bookings.some(b => b.id === booking.id)) {
+      if (window.appState.currentUser) {
+        booking.user_id = window.appState.currentUser.email;
+      }
       db.bookings.push(booking);
       saveDB(db);
     }

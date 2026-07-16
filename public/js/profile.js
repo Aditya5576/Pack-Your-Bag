@@ -143,10 +143,28 @@ async function initProfileView() {
       const emailVal = document.getElementById("prof-email").value.trim();
       const mobileVal = document.getElementById("prof-mobile").value.trim();
 
+      const oldEmail = localStorage.getItem("ACTIVE_SESSION_EMAIL");
+      if (oldEmail) {
+        const dbStr = localStorage.getItem("bookmytrip_db");
+        let db = { users: [], bookings: [], routes: [] };
+        if (dbStr) {
+          try { db = JSON.parse(dbStr); } catch (e) {}
+        }
+        db.users = db.users || [];
+        const matchedIdx = db.users.findIndex(u => u.email.toLowerCase() === oldEmail.toLowerCase());
+        if (matchedIdx !== -1) {
+          db.users[matchedIdx].name = nameVal;
+          db.users[matchedIdx].email = emailVal;
+          db.users[matchedIdx].mobile = mobileVal;
+          localStorage.setItem("bookmytrip_db", JSON.stringify(db));
+        }
+      }
+
       state.currentUser.name = nameVal;
       state.currentUser.email = emailVal;
       state.currentUser.mobile = mobileVal;
 
+      localStorage.setItem("ACTIVE_SESSION_EMAIL", emailVal);
       localStorage.setItem("USER_PROFILE", JSON.stringify(state.currentUser));
 
       showNotification("Profile details saved successfully!", "success");
